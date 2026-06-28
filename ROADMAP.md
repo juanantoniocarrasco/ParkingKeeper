@@ -80,9 +80,9 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 
 ## Fase 4: Features de operación
 
-- [ ] Assignments (asignar cliente+vehículo a plaza, dar de baja, históricos)
-- [ ] Payments (registrar pago N meses, cash/bizum, vista de historial)
-- [ ] Cuadrante anual (clientes × meses, indicador pagado/pendiente)
+- [x] Assignments (asignar cliente+vehículo a plaza, dar de baja, históricos)
+- [x] Payments (registrar pago N meses, cash/bizum, vista de historial)
+- [x] Cuadrante anual (clientes × meses, indicador pagado/pendiente)
 
 ## Fase 5: Recibos & sincronización
 
@@ -107,6 +107,6 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 | 1 | ✓ | `de62d6f` |
 | 2 | ✓ | `ea784d0` |
 | 3 | ✓ | `224a636` |
-| 4 | — | — |
+| 4 | ✓ | — |
 | 5 | — | — |
 | 6 | — | — |

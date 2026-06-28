@@ -29,6 +29,7 @@ private extension AppRootView {
                 sidebarRow(.spotGrid)
                 sidebarRow(.assignmentList)
                 sidebarRow(.paymentList)
+                sidebarRow(.annualGrid)
             }
         }
     }

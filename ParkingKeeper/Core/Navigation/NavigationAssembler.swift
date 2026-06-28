@@ -23,16 +23,19 @@ enum NavigationAssembler {
             SpotGridView()
                 .navigationTitle(title(for: screen))
         case .assignmentList:
-            placeholder(title: "Asignaciones")
+            AssignmentListView()
                 .navigationTitle(title(for: screen))
         case .assignmentDetail(let assignment):
-            placeholder(title: "Asignación")
-                .navigationTitle(assignment.startDate.formatted())
+            AssignmentDetailView(assignmentID: assignment.id)
+        case .assignmentForm(let assignment):
+            AssignmentFormView(model: AssignmentViewMapper.toFormModel(assignment))
         case .paymentList:
-            placeholder(title: "Pagos")
+            PaymentListView()
                 .navigationTitle(title(for: screen))
-        case .paymentForm:
-            placeholder(title: "Pago")
+        case .paymentForm(let payment):
+            PaymentFormView(model: PaymentViewMapper.toFormModel(payment))
+        case .annualGrid:
+            AnnualGridView()
                 .navigationTitle(title(for: screen))
         }
     }
@@ -48,8 +51,10 @@ enum NavigationAssembler {
         case .spotGrid: return "Plazas"
         case .assignmentList: return "Asignaciones"
         case .assignmentDetail: return "Asignación"
+        case .assignmentForm: return "Asignación"
         case .paymentList: return "Pagos"
         case .paymentForm: return "Pago"
+        case .annualGrid: return "Cuadrante anual"
         }
     }
 
