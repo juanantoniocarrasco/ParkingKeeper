@@ -3,6 +3,8 @@ import SwiftData
 
 @main
 struct ParkingKeeperApp: App {
+    @State private var coordinator = NavigationCoordinator()
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             ClientPersistentModel.self,
@@ -23,6 +25,7 @@ struct ParkingKeeperApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(coordinator)
         }
         .modelContainer(sharedModelContainer)
     }

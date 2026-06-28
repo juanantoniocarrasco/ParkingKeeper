@@ -66,10 +66,10 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 
 ## Fase 2: Navegación
 
-- [ ] `Core/Navigation/AppRootView.swift` — NavigationSplitView root
-- [ ] `Core/Navigation/PKScreen.swift` — enum tipado de pantallas
-- [ ] `Core/Navigation/NavigationCoordinator.swift` — @Observable coordinator
-- [ ] Assembler de navegación
+- [x] `Core/Navigation/AppRootView.swift` — NavigationSplitView root
+- [x] `Core/Navigation/PKScreen.swift` — enum tipado de pantallas
+- [x] `Core/Navigation/NavigationCoordinator.swift` — @Observable coordinator
+- [x] Assembler de navegación (`NavigationAssembler`)
 
 ## Fase 3: Features core
 
