@@ -152,6 +152,7 @@ private extension DashboardView {
         .padding(.vertical, 16)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
+}
 
 // MARK: - Subtypes
 extension DashboardView {
