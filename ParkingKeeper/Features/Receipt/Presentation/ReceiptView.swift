@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ReceiptView: View {
     @State private var viewState: ViewState
+    @State private var pdfURL: URL?
 
     private let paymentID: UUID
 
@@ -13,6 +14,11 @@ struct ReceiptView: View {
     var body: some View {
         content
             .toolbar { toolbar }
+            .task(id: paymentID) {
+                if case .loaded(let model) = viewState {
+                    pdfURL = generatePDF(model: model)
+                }
+            }
     }
 }
 
@@ -20,8 +26,8 @@ struct ReceiptView: View {
 private extension ReceiptView {
     var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            if case .loaded(let model) = viewState {
-                ShareLink(item: receiptText(model), preview: SharePreview("Recibo", image: Image(systemName: "doc.text")))
+            if let pdfURL {
+                ShareLink(item: pdfURL, preview: SharePreview("Recibo", image: Image(systemName: "doc.text")))
             }
         }
     }
@@ -52,90 +58,32 @@ private extension ReceiptView {
 
     func loadedView(_ model: Model) -> some View {
         ScrollView {
-            VStack(spacing: 16) {
-                receiptHeader(model)
-                Divider()
-                receiptBody(model)
-                Divider()
-                receiptFooter(model)
-            }
-            .padding()
+            ReceiptContent(model: model)
+                .padding()
         }
     }
+}
 
-    func receiptHeader(_ model: Model) -> some View {
-        VStack(spacing: 4) {
-            Text("Parking Keeper")
-                .font(.title)
-                .bold()
-            Text("Recibo de pago")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-            Text("Nº \(model.paymentID.uuidString.prefix(8))")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+// MARK: - PDF generation
+private extension ReceiptView {
+    func generatePDF(model: Model) -> URL? {
+        let renderer = ImageRenderer(content: ReceiptContent(model: model).frame(width: 540))
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("recibo-\(model.paymentID.uuidString.prefix(8)).pdf")
+
+        try? FileManager.default.removeItem(at: url)
+
+        renderer.render { size, render in
+            var mediaBox = CGRect(origin: .zero, size: size)
+            guard let consumer = CGDataConsumer(url: url as CFURL) else { return }
+            guard let ctx = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else { return }
+            ctx.beginPDFPage(nil)
+            render(ctx)
+            ctx.endPDFPage()
+            ctx.closePDF()
         }
-    }
 
-    func receiptBody(_ model: Model) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            row(label: "Cliente", value: model.clientName)
-            row(label: "Vehículo", value: model.licensePlate)
-            row(label: "Plaza", value: "\(model.spotNumber)")
-            Divider()
-            row(label: "Importe", value: "\(model.amount.formatted(.currency(code: "EUR")))")
-            row(label: "Método", value: model.method == .cash ? "Efectivo" : "Bizum")
-            row(label: "Período", value: periodLabel(model))
-            row(label: "Fecha de pago", value: model.date.formatted(date: .long, time: .omitted))
-        }
-    }
-
-    func receiptFooter(_ model: Model) -> some View {
-        VStack(spacing: 4) {
-            Text("Gracias por su pago")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(Date().formatted(date: .long, time: .shortened))
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
-        }
-    }
-
-    func row(label: String, value: String) -> some View {
-        HStack {
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(width: 80, alignment: .leading)
-            Text(value)
-                .font(.body)
-            Spacer()
-        }
-    }
-
-    func periodLabel(_ model: Model) -> String {
-        let start = model.periodStartDate.formatted(date: .abbreviated, time: .omitted)
-        let end = model.periodEndDate.formatted(date: .abbreviated, time: .omitted)
-        return "\(start) – \(end) (\(model.periodMonths) mes\(model.periodMonths > 1 ? "es" : ""))"
-    }
-
-    func receiptText(_ model: Model) -> String {
-        """
-        Parking Keeper — Recibo de pago
-        Nº \(model.paymentID.uuidString.prefix(8))
-
-        Cliente: \(model.clientName)
-        Vehículo: \(model.licensePlate)
-        Plaza: \(model.spotNumber)
-
-        Importe: \(model.amount.formatted(.currency(code: "EUR")))
-        Método: \(model.method == .cash ? "Efectivo" : "Bizum")
-        Período: \(periodLabel(model))
-        Fecha de pago: \(model.date.formatted(date: .long, time: .omitted))
-
-        Gracias por su pago.
-        Emitido: \(Date().formatted(date: .long, time: .shortened))
-        """
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 }
 
