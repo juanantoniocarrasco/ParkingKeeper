@@ -140,39 +140,63 @@ enum DemoData {
 
     // MARK: - Payments
 
-    /// paidUpToMonth por índice de asignación (índices 0-27 activas, 28-31 históricas)
-    private static let paidUpToConfig: [Int] = {
-        var cfg: [Int] = []
-        for _ in 0..<18 { cfg.append(6) }   // pagado hasta junio (al día)
-        for _ in 18..<20 { cfg.append(3) }  // pagado hasta marzo (atraso abril-junio)
-        cfg.append(2)                         // pagado hasta febrero (mucho atraso)
-        cfg.append(5)                         // empezó feb, pagado hasta mayo
-        cfg.append(5)                         // empezó mar, pagado hasta mayo
-        cfg.append(5)                         // empezó abr, pagado hasta mayo
-        cfg.append(5)                         // empezó may, pagado hasta mayo
-        for _ in 25..<28 { cfg.append(2) }   // pagado hasta febrero (mucho atraso)
-        for _ in 28..<32 { cfg.append(0) }   // históricas: sin pagos en 2026
+    /// Config de lotes de pago por índice de asignación (0-27 activas, 28-31 históricas sin pagos).
+    /// Cada par es (mesesQueCubre: Int, cuántosMeses: Int).
+    /// Ej: [(1, 3)] → un pago de 30€×3=90€ cubriendo 3 meses.
+    private static let paymentConfig: [[(periodMonths: Int, count: Int)]] = {
+        var cfg: [[(Int, Int)]] = [[(1, 6)]]   // assign 0: mes a mes, 6 pagos de 30€
+        cfg.append([(1, 6)])                     // assign 1
+        cfg.append([(1, 6)])                     // assign 2
+        cfg.append([(1, 6)])                     // assign 3
+        cfg.append([(1, 6)])                     // assign 4
+        cfg.append([(2, 2), (1, 2)])             // assign 5: 2 pagos dobles + 2 simples
+        cfg.append([(1, 6)])                     // assign 6
+        cfg.append([(1, 6)])                     // assign 7
+        cfg.append([(1, 6)])                     // assign 8
+        cfg.append([(1, 6)])                     // assign 9
+        cfg.append([(1, 3), (3, 1)])             // assign 10: 3 simples + 1 triple
+        cfg.append([(1, 6)])                     // assign 11
+        cfg.append([(1, 6)])                     // assign 12
+        cfg.append([(1, 6)])                     // assign 13
+        cfg.append([(1, 6)])                     // assign 14
+        cfg.append([(1, 6)])                     // assign 15
+        cfg.append([(1, 6)])                     // assign 16
+        cfg.append([(1, 6)])                     // assign 17
+        cfg.append([(3, 1)])                     // assign 18: pagó 3 meses de golpe (90€)
+        cfg.append([(2, 1), (1, 1)])             // assign 19: 2 meses + 1 mes
+        cfg.append([(2, 1)])                     // assign 20: 2 meses de golpe (60€)
+        cfg.append([(2, 2)])                     // assign 21: 2 pagos dobles = 4 meses (120€)
+        cfg.append([(3, 1)])                     // assign 22: 3 meses de golpe (90€)
+        cfg.append([(1, 2)])                     // assign 23: 2 pagos simples
+        cfg.append([(1, 1)])                     // assign 24: 1 pago simple
+        cfg.append([(2, 1)])                     // assign 25: 2 meses de golpe
+        cfg.append([(2, 1)])                     // assign 26: 2 meses de golpe
+        cfg.append([(2, 1)])                     // assign 27: 2 meses de golpe
+        for _ in 28..<32 { cfg.append([]) }     // históricas: sin pagos
         return cfg
     }()
 
     static let payments: [Payment] = {
         var result: [Payment] = []
         for (i, assignment) in assignments.enumerated() {
-            let paidUpTo = paidUpToConfig[i]
-            guard paidUpTo > 0 else { continue }
-            let startMonth = Calendar.current.component(.month, from: assignment.startDate)
-            for month in startMonth...paidUpTo {
-                let start = Calendar.current.date(from: DateComponents(year: 2026, month: month, day: 1))!
-                let end = Calendar.current.date(from: DateComponents(year: 2026, month: month, day: 28))!
-                result.append(Payment(
-                    assignmentID: assignment.id,
-                    amount: 30.0,
-                    method: month % 3 == 0 ? .cash : .bizum,
-                    date: start,
-                    periodMonths: 1,
-                    periodStartDate: start,
-                    periodEndDate: end
-                ))
+            let config = paymentConfig[i]
+            var currentMonth = Calendar.current.component(.month, from: assignment.startDate)
+            for (period, count) in config {
+                for _ in 0..<count {
+                    let endMonth = currentMonth + period - 1
+                    let start = Calendar.current.date(from: DateComponents(year: 2026, month: currentMonth, day: 1))!
+                    let end = Calendar.current.date(from: DateComponents(year: 2026, month: endMonth, day: 28))!
+                    result.append(Payment(
+                        assignmentID: assignment.id,
+                        amount: 30.0 * Double(period),
+                        method: currentMonth % 3 == 0 ? .cash : .bizum,
+                        date: start,
+                        periodMonths: period,
+                        periodStartDate: start,
+                        periodEndDate: end
+                    ))
+                    currentMonth = endMonth + 1
+                }
             }
         }
         return result

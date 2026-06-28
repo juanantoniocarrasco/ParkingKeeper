@@ -169,8 +169,8 @@ extension AnnualGridView {
                     let clientPayments = DemoData.payments.filter { payment in
                         payment.assignmentID == assignment?.id
                     }
-                    let lastPaid = clientPayments.map {
-                        Calendar.current.component(.month, from: $0.periodStartDate)
+                    let lastPaid = clientPayments.map { payment in
+                        Calendar.current.component(.month, from: payment.periodStartDate) + payment.periodMonths - 1
                     }.max()
                     return ClientRow(id: client.id, name: client.name, firstMonth: firstMonth, paidUpToMonth: lastPaid)
                 },

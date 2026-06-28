@@ -78,21 +78,24 @@ private extension PaymentListView {
     func paymentRow(_ row: PaymentRow) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text("\(row.amount.formatted(.currency(code: "EUR")))")
+                Text(row.clientName)
                     .font(.headline)
                 Spacer()
+                Text("\(row.amount.formatted(.currency(code: "EUR")))")
+                    .font(.headline)
+            }
+            HStack {
                 Text(row.method == .cash ? "Efectivo" : "Bizum")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-            }
-            HStack {
-                Text(row.date.formatted(date: .abbreviated, time: .omitted))
-                    .font(.caption)
                 Spacer()
-                Text("\(row.periodMonths) mes\(row.periodMonths > 1 ? "es" : "")")
-                    .font(.caption2)
+                Text("\(row.date.formatted(date: .abbreviated, time: .omitted))")
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            Text("\(row.periodMonths) mes\(row.periodMonths > 1 ? "es" : "")")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
         }
     }
 }
@@ -101,6 +104,7 @@ private extension PaymentListView {
 extension PaymentListView {
     struct PaymentRow: Identifiable {
         let id: UUID
+        let clientName: String
         let amount: Double
         let method: PaymentMethod
         let date: Date
@@ -115,14 +119,23 @@ extension PaymentListView {
     }
 
     static let mocks: [PaymentRow] = [
-        .init(id: Payment.mockJanuary.id, amount: Payment.mockJanuary.amount, method: Payment.mockJanuary.method, date: Payment.mockJanuary.date, periodMonths: Payment.mockJanuary.periodMonths),
-        .init(id: Payment.mockFebruary.id, amount: Payment.mockFebruary.amount, method: Payment.mockFebruary.method, date: Payment.mockFebruary.date, periodMonths: Payment.mockFebruary.periodMonths),
+        .init(id: Payment.mockJanuary.id, clientName: Client.mockMaria.name, amount: Payment.mockJanuary.amount, method: Payment.mockJanuary.method, date: Payment.mockJanuary.date, periodMonths: Payment.mockJanuary.periodMonths),
+        .init(id: Payment.mockFebruary.id, clientName: Client.mockMaria.name, amount: Payment.mockFebruary.amount, method: Payment.mockFebruary.method, date: Payment.mockFebruary.date, periodMonths: Payment.mockFebruary.periodMonths),
     ]
 
     static var effectiveMocks: [PaymentRow] {
         if DemoData.isEnabled {
-            return DemoData.payments.map {
-                PaymentRow(id: $0.id, amount: $0.amount, method: $0.method, date: $0.date, periodMonths: $0.periodMonths)
+            return DemoData.payments.map { payment in
+                let assignment = DemoData.assignments.first { $0.id == payment.assignmentID }
+                let client = assignment.flatMap { a in DemoData.clients.first { $0.id == a.clientID } }
+                return PaymentRow(
+                    id: payment.id,
+                    clientName: client?.name ?? "—",
+                    amount: payment.amount,
+                    method: payment.method,
+                    date: payment.date,
+                    periodMonths: payment.periodMonths
+                )
             }
         }
         return mocks
