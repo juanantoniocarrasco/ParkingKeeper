@@ -2,7 +2,7 @@ import SwiftUI
 
 struct VehicleListView: View {
     @Environment(NavigationCoordinator.self) private var coordinator
-    @State private var viewState: ViewState = .loaded(VehicleListView.mocks)
+    @State private var viewState: ViewState = .loaded(VehicleListView.effectiveMocks)
     @State private var searchText = ""
 
     var body: some View {
@@ -120,6 +120,15 @@ extension VehicleListView {
         .init(id: Vehicle.mockRenault.id, licensePlate: Vehicle.mockRenault.licensePlate, description: "Renault Clio"),
         .init(id: Vehicle.mockToyota.id, licensePlate: Vehicle.mockToyota.licensePlate, description: "Toyota Corolla"),
     ]
+
+    static var effectiveMocks: [VehicleListRow] {
+        if DemoData.isEnabled {
+            return DemoData.vehicles.map {
+                VehicleListRow(id: $0.id, licensePlate: $0.licensePlate, description: [$0.brand, $0.model].compactMap { $0 }.joined(separator: " "))
+            }
+        }
+        return mocks
+    }
 }
 
 #Preview("Cargado") {

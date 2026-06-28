@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SpotGridView: View {
-    @State private var viewState: ViewState = .loaded(SpotGridView.mocks)
+    @State private var viewState: ViewState = .loaded(SpotGridView.effectiveMocks)
 
     var body: some View {
         content
@@ -100,6 +100,13 @@ extension SpotGridView {
         .mockSpot1, .mockSpot2, .mockSpot3,
         .mockSpot4, .mockSpot5, .mockSpot6,
     ])
+
+    static var effectiveMocks: [SpotItem] {
+        if DemoData.isEnabled {
+            return SpotViewMapper.toGridItems(DemoData.spots)
+        }
+        return mocks
+    }
 }
 
 #Preview("Cargado") {

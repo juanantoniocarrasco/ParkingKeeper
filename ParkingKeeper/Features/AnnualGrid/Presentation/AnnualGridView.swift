@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AnnualGridView: View {
-    @State private var viewState: ViewState = .loaded(AnnualGridView.mockModel)
+    @State private var viewState: ViewState = .loaded(AnnualGridView.effectiveMockModel)
 
     private let currentMonth: Int = Calendar.current.component(.month, from: Date())
 
@@ -158,6 +158,31 @@ extension AnnualGridView {
             MonthColumn(id: 11, label: "Nov"), MonthColumn(id: 12, label: "Dic"),
         ]
     )
+
+    static var effectiveMockModel: Model {
+        if DemoData.isEnabled {
+            return Model(
+                clients: DemoData.clients.map { client -> ClientRow in
+                    let assignment = DemoData.assignments.first { $0.clientID == client.id }
+                    let firstMonth = (assignment != nil)
+                        ? Calendar.current.component(.month, from: assignment!.startDate) : nil
+                    let clientPayments = DemoData.payments.filter { payment in
+                        payment.assignmentID == assignment?.id
+                    }
+                    let lastPaid = clientPayments.map {
+                        Calendar.current.component(.month, from: $0.periodStartDate)
+                    }.max()
+                    return ClientRow(id: client.id, name: client.name, firstMonth: firstMonth, paidUpToMonth: lastPaid)
+                },
+                months: (1...12).map { MonthColumn(id: $0, label: monthLabel($0)) }
+            )
+        }
+        return mockModel
+    }
+
+    private static func monthLabel(_ m: Int) -> String {
+        ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][m - 1]
+    }
 }
 
 #Preview("Cargado") {

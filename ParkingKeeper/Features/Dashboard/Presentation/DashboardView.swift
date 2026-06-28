@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct DashboardView: View {
-    @State private var viewState: ViewState = .loaded(DashboardView.mockModel)
+    @State private var viewState: ViewState = .loaded(DashboardView.effectiveMockModel)
 
     var body: some View {
         content
@@ -91,6 +91,17 @@ extension DashboardView {
         occupiedSpots: 2,
         pendingPayments: 1
     )
+
+    static var effectiveMockModel: Model {
+        if DemoData.isEnabled {
+            let occupied = DemoData.spots.filter { $0.status == .occupied }.count
+            let paidMonths = Set(DemoData.payments.map { Calendar.current.component(.month, from: $0.periodStartDate) })
+            let currentMonth = Calendar.current.component(.month, from: Date())
+            let pending = DemoData.assignments.count * currentMonth - DemoData.payments.count
+            return Model(totalSpots: DemoData.spots.count, occupiedSpots: occupied, pendingPayments: max(0, pending))
+        }
+        return mockModel
+    }
 }
 
 #Preview("Cargado") {

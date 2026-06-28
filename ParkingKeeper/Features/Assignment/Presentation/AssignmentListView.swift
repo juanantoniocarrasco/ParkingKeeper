@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AssignmentListView: View {
     @Environment(NavigationCoordinator.self) private var coordinator
-    @State private var viewState: ViewState = .loaded(AssignmentListView.mocks)
+    @State private var viewState: ViewState = .loaded(AssignmentListView.effectiveMocks)
     @State private var showingActive = true
 
     var body: some View {
@@ -177,6 +177,29 @@ extension AssignmentListView {
             monthlyRate: Assignment.mockHistoric.monthlyRate
         ),
     ]
+
+    static var effectiveMocks: [AssignmentRow] {
+        if DemoData.isEnabled {
+            return DemoData.assignments.map { a in
+                let client = DemoData.clients.first { $0.id == a.clientID }
+                let vehicle = DemoData.vehicles.first { $0.id == a.vehicleID }
+                let spot = DemoData.spots.first { $0.id == a.spotID }
+                return AssignmentRow(
+                    id: a.id,
+                    clientID: a.clientID,
+                    clientName: client?.name ?? "—",
+                    vehicleID: a.vehicleID,
+                    licensePlate: vehicle?.licensePlate ?? "—",
+                    spotID: a.spotID,
+                    spotNumber: spot?.number ?? 0,
+                    startDate: a.startDate,
+                    endDate: a.endDate,
+                    monthlyRate: a.monthlyRate
+                )
+            }
+        }
+        return mocks
+    }
 }
 
 #Preview("Cargado") {

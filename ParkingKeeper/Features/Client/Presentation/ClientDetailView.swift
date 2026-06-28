@@ -8,7 +8,7 @@ struct ClientDetailView: View {
 
     init(clientID: UUID) {
         self.clientID = clientID
-        _viewState = State(initialValue: .loaded(ClientDetailView.mockModel))
+        _viewState = State(initialValue: .loaded(ClientDetailView.effectiveModel(for: clientID)))
     }
 
     var body: some View {
@@ -105,6 +105,13 @@ extension ClientDetailView {
         email: Client.mockMaria.email,
         notes: Client.mockMaria.notes
     )
+
+    static func effectiveModel(for clientID: UUID) -> Model {
+        if DemoData.isEnabled, let client = DemoData.clients.first(where: { $0.id == clientID }) {
+            return ClientViewMapper.toDetailModel(client)
+        }
+        return mockModel
+    }
 }
 
 #Preview("Cargado") {

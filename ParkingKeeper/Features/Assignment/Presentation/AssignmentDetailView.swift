@@ -8,7 +8,7 @@ struct AssignmentDetailView: View {
 
     init(assignmentID: UUID) {
         self.assignmentID = assignmentID
-        _viewState = State(initialValue: .loaded(AssignmentDetailView.mockModel))
+        _viewState = State(initialValue: .loaded(AssignmentDetailView.effectiveModel(for: assignmentID)))
     }
 
     var body: some View {
@@ -125,6 +125,26 @@ extension AssignmentDetailView {
         monthlyRate: Assignment.mockActive.monthlyRate,
         isActive: true
     )
+
+    static func effectiveModel(for assignmentID: UUID) -> Model {
+        if DemoData.isEnabled, let a = DemoData.assignments.first(where: { $0.id == assignmentID }) {
+            let client = DemoData.clients.first { $0.id == a.clientID }
+            let vehicle = DemoData.vehicles.first { $0.id == a.vehicleID }
+            let spot = DemoData.spots.first { $0.id == a.spotID }
+            return Model(
+                id: a.id, clientID: a.clientID,
+                clientName: client?.name ?? "—",
+                vehicleID: a.vehicleID,
+                licensePlate: vehicle?.licensePlate ?? "—",
+                spotID: a.spotID,
+                spotNumber: spot?.number ?? 0,
+                startDate: a.startDate, endDate: a.endDate,
+                monthlyRate: a.monthlyRate,
+                isActive: a.endDate == nil
+            )
+        }
+        return mockModel
+    }
 }
 
 #Preview("Cargado") {

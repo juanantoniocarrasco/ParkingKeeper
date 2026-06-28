@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ClientListView: View {
     @Environment(NavigationCoordinator.self) private var coordinator
-    @State private var viewState: ViewState = .loaded(ClientListView.mocks)
+    @State private var viewState: ViewState = .loaded(ClientListView.effectiveMocks)
     @State private var searchText = ""
 
     var body: some View {
@@ -122,6 +122,15 @@ extension ClientListView {
         .init(id: Client.mockCarlos.id, name: Client.mockCarlos.name, phone: Client.mockCarlos.phone),
         .init(id: Client.mockAna.id, name: Client.mockAna.name, phone: Client.mockAna.phone),
     ]
+
+    static var effectiveMocks: [ClientListRow] {
+        if DemoData.isEnabled {
+            return DemoData.clients.map {
+                ClientListRow(id: $0.id, name: $0.name, phone: $0.phone)
+            }
+        }
+        return mocks
+    }
 }
 
 #Preview("Cargado") {

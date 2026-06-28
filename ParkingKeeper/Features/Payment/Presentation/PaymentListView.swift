@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PaymentListView: View {
     @Environment(NavigationCoordinator.self) private var coordinator
-    @State private var viewState: ViewState = .loaded(PaymentListView.mocks)
+    @State private var viewState: ViewState = .loaded(PaymentListView.effectiveMocks)
 
     var body: some View {
         content
@@ -118,6 +118,15 @@ extension PaymentListView {
         .init(id: Payment.mockJanuary.id, amount: Payment.mockJanuary.amount, method: Payment.mockJanuary.method, date: Payment.mockJanuary.date, periodMonths: Payment.mockJanuary.periodMonths),
         .init(id: Payment.mockFebruary.id, amount: Payment.mockFebruary.amount, method: Payment.mockFebruary.method, date: Payment.mockFebruary.date, periodMonths: Payment.mockFebruary.periodMonths),
     ]
+
+    static var effectiveMocks: [PaymentRow] {
+        if DemoData.isEnabled {
+            return DemoData.payments.map {
+                PaymentRow(id: $0.id, amount: $0.amount, method: $0.method, date: $0.date, periodMonths: $0.periodMonths)
+            }
+        }
+        return mocks
+    }
 }
 
 #Preview("Cargado") {
