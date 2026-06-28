@@ -7,7 +7,7 @@ struct ClientListView: View {
 
     var body: some View {
         content
-            .searchable(text: $searchText, prompt: "Search clients")
+            .searchable(text: $searchText, prompt: "Buscar clientes")
             .toolbar { toolbar }
     }
 }
@@ -19,7 +19,7 @@ private extension ClientListView {
             Button {
                 coordinator.navigationPath.append(PKScreen.clientForm(nil))
             } label: {
-                Label("Add Client", systemImage: "plus")
+                Label("Añadir cliente", systemImage: "plus")
             }
         }
     }
@@ -39,14 +39,14 @@ private extension ClientListView {
     }
 
     var loadingView: some View {
-        ProgressView("Loading clients...")
+        ProgressView("Cargando clientes...")
     }
 
     var emptyView: some View {
         ContentUnavailableView(
-            "No Clients",
+            "Sin clientes",
             systemImage: "person.2.slash",
-            description: Text("Add a client to get started.")
+            description: Text("Añade un cliente para empezar.")
         )
     }
 
@@ -124,7 +124,7 @@ extension ClientListView {
     ]
 }
 
-#Preview("Loaded") {
+#Preview("Cargado") {
     NavigationStack {
         ClientListView()
     }

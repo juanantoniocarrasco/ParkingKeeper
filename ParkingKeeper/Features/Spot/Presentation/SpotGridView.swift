@@ -25,14 +25,14 @@ private extension SpotGridView {
     }
 
     var loadingView: some View {
-        ProgressView("Loading spots...")
+        ProgressView("Cargando plazas...")
     }
 
     var emptyView: some View {
         ContentUnavailableView(
-            "No Spots",
+            "Sin plazas",
             systemImage: "parkingsign.slash",
-            description: Text("Add spots to manage your parking.")
+            description: Text("Añade plazas para gestionar tu parking.")
         )
     }
 
@@ -64,7 +64,7 @@ private extension SpotGridView {
             Text("\(spot.number)")
                 .font(.caption)
                 .bold()
-            Text(spot.status == .free ? "Free" : "Occupied")
+            Text(spot.status == .free ? "Libre" : "Ocupada")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }
@@ -102,6 +102,6 @@ extension SpotGridView {
     ])
 }
 
-#Preview("Loaded") {
+#Preview("Cargado") {
     SpotGridView()
 }

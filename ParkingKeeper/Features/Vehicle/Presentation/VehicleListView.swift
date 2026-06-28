@@ -7,7 +7,7 @@ struct VehicleListView: View {
 
     var body: some View {
         content
-            .searchable(text: $searchText, prompt: "Search vehicles")
+            .searchable(text: $searchText, prompt: "Buscar vehículos")
             .toolbar { toolbar }
     }
 }
@@ -19,7 +19,7 @@ private extension VehicleListView {
             Button {
                 coordinator.navigationPath.append(PKScreen.vehicleForm(nil))
             } label: {
-                Label("Add Vehicle", systemImage: "plus")
+                Label("Añadir vehículo", systemImage: "plus")
             }
         }
     }
@@ -39,14 +39,14 @@ private extension VehicleListView {
     }
 
     var loadingView: some View {
-        ProgressView("Loading vehicles...")
+        ProgressView("Cargando vehículos...")
     }
 
     var emptyView: some View {
         ContentUnavailableView(
-            "No Vehicles",
+            "Sin vehículos",
             systemImage: "car.slash",
-            description: Text("Add a vehicle to get started.")
+            description: Text("Añade un vehículo para empezar.")
         )
     }
 
@@ -122,7 +122,7 @@ extension VehicleListView {
     ]
 }
 
-#Preview("Loaded") {
+#Preview("Cargado") {
     NavigationStack {
         VehicleListView()
     }

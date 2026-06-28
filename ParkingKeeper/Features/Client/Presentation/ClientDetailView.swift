@@ -22,7 +22,7 @@ private extension ClientDetailView {
     var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             if case .loaded(let model) = viewState {
-                Button("Edit") {
+                Button("Editar") {
                     coordinator.navigationPath.append(
                         PKScreen.clientForm(Client(
                             id: model.id,
@@ -50,22 +50,22 @@ private extension ClientDetailView {
     }
 
     var loadingView: some View {
-        ProgressView("Loading...")
+        ProgressView("Cargando...")
     }
 
     func loadedView(_ model: Model) -> some View {
         List {
-            Section("Contact") {
-                LabeledContent("Name", value: model.name)
+            Section("Contacto") {
+                LabeledContent("Nombre", value: model.name)
                 if let phone = model.phone {
-                    LabeledContent("Phone", value: phone)
+                    LabeledContent("Teléfono", value: phone)
                 }
                 if let email = model.email {
-                    LabeledContent("Email", value: email)
+                    LabeledContent("Correo", value: email)
                 }
             }
             if let notes = model.notes {
-                Section("Notes") {
+                Section("Notas") {
                     Text(notes)
                 }
             }
@@ -107,7 +107,7 @@ extension ClientDetailView {
     )
 }
 
-#Preview("Loaded") {
+#Preview("Cargado") {
     NavigationStack {
         ClientDetailView(clientID: Client.mockMaria.id)
     }

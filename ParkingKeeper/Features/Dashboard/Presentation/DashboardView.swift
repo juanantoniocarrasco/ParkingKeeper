@@ -23,7 +23,7 @@ private extension DashboardView {
     }
 
     var loadingView: some View {
-        ProgressView("Loading...")
+        ProgressView("Cargando...")
     }
 
     func errorView(_ message: String) -> some View {
@@ -38,13 +38,13 @@ private extension DashboardView {
         ScrollView {
             VStack(spacing: 16) {
                 statCard(
-                    title: "Occupied Spots",
+                    title: "Plazas ocupadas",
                     value: "\(model.occupiedSpots)/\(model.totalSpots)",
                     systemImage: "parkingsign",
                     color: .blue
                 )
                 statCard(
-                    title: "Pending Payments",
+                    title: "Pagos pendientes",
                     value: "\(model.pendingPayments)",
                     systemImage: "creditcard",
                     color: .orange
@@ -93,6 +93,6 @@ extension DashboardView {
     )
 }
 
-#Preview("Loaded") {
+#Preview("Cargado") {
     DashboardView()
 }

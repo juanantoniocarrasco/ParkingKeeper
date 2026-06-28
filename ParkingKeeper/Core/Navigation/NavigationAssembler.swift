@@ -23,16 +23,16 @@ enum NavigationAssembler {
             SpotGridView()
                 .navigationTitle(title(for: screen))
         case .assignmentList:
-            placeholder(title: "Assignments")
+            placeholder(title: "Asignaciones")
                 .navigationTitle(title(for: screen))
         case .assignmentDetail(let assignment):
-            placeholder(title: "Assignment")
+            placeholder(title: "Asignación")
                 .navigationTitle(assignment.startDate.formatted())
         case .paymentList:
-            placeholder(title: "Payments")
+            placeholder(title: "Pagos")
                 .navigationTitle(title(for: screen))
         case .paymentForm:
-            placeholder(title: "Payment")
+            placeholder(title: "Pago")
                 .navigationTitle(title(for: screen))
         }
     }
@@ -40,16 +40,16 @@ enum NavigationAssembler {
     static func title(for screen: PKScreen) -> String {
         switch screen {
         case .dashboard: return "Dashboard"
-        case .clientList: return "Clients"
-        case .clientDetail: return "Client"
-        case .clientForm: return "Client"
-        case .vehicleList: return "Vehicles"
-        case .vehicleForm: return "Vehicle"
-        case .spotGrid: return "Spots"
-        case .assignmentList: return "Assignments"
-        case .assignmentDetail: return "Assignment"
-        case .paymentList: return "Payments"
-        case .paymentForm: return "Payment"
+        case .clientList: return "Clientes"
+        case .clientDetail: return "Cliente"
+        case .clientForm: return "Cliente"
+        case .vehicleList: return "Vehículos"
+        case .vehicleForm: return "Vehículo"
+        case .spotGrid: return "Plazas"
+        case .assignmentList: return "Asignaciones"
+        case .assignmentDetail: return "Asignación"
+        case .paymentList: return "Pagos"
+        case .paymentForm: return "Pago"
         }
     }
 
@@ -58,7 +58,7 @@ enum NavigationAssembler {
         VStack {
             Text(title)
                 .font(.largeTitle)
-            Text("Coming soon")
+            Text("Próximamente")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

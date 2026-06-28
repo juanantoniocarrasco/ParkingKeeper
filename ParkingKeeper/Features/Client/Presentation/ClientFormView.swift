@@ -19,7 +19,7 @@ struct ClientFormView: View {
 
     var body: some View {
         form
-            .navigationTitle(model != nil ? "Edit Client" : "New Client")
+            .navigationTitle(model != nil ? "Editar cliente" : "Nuevo cliente")
             .toolbar { toolbar }
     }
 }
@@ -29,10 +29,10 @@ private extension ClientFormView {
     var toolbar: some ToolbarContent {
         Group {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
+                Button("Cancelar") { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") { save() }
+                Button("Guardar") { save() }
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
@@ -40,21 +40,21 @@ private extension ClientFormView {
 
     var form: some View {
         Form {
-            Section("Client Information") {
-                TextField("Name", text: $name)
+            Section("Información del cliente") {
+                TextField("Nombre", text: $name)
                     .textContentType(.name)
-                TextField("Phone", text: $phone)
+                TextField("Teléfono", text: $phone)
                     .textContentType(.telephoneNumber)
 #if os(iOS)
                     .keyboardType(.phonePad)
 #endif
-                TextField("Email", text: $email)
+                TextField("Correo", text: $email)
                     .textContentType(.emailAddress)
 #if os(iOS)
                     .keyboardType(.emailAddress)
 #endif
             }
-            Section("Notes") {
+            Section("Notas") {
                 TextEditor(text: $notes)
                     .frame(minHeight: 80)
             }
@@ -94,10 +94,10 @@ extension ClientFormView {
     }
 }
 
-#Preview("New Client") {
+#Preview("Nuevo cliente") {
     ClientFormView(model: ClientFormView.mockNew())
 }
 
-#Preview("Edit Client") {
+#Preview("Editar cliente") {
     ClientFormView(model: ClientFormView.mockEdit())
 }

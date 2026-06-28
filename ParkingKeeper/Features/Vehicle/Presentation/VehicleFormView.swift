@@ -19,7 +19,7 @@ struct VehicleFormView: View {
 
     var body: some View {
         form
-            .navigationTitle(formModel != nil ? "Edit Vehicle" : "New Vehicle")
+            .navigationTitle(formModel != nil ? "Editar vehículo" : "Nuevo vehículo")
             .toolbar { toolbar }
     }
 }
@@ -29,10 +29,10 @@ private extension VehicleFormView {
     var toolbar: some ToolbarContent {
         Group {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
+                Button("Cancelar") { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") { save() }
+                Button("Guardar") { save() }
                     .disabled(!isValid)
             }
         }
@@ -40,21 +40,21 @@ private extension VehicleFormView {
 
     var form: some View {
         Form {
-            Section("Vehicle Information") {
-                TextField("License Plate", text: $licensePlate)
+            Section("Información del vehículo") {
+                TextField("Matrícula", text: $licensePlate)
                     .textContentType(.none)
-                TextField("Brand", text: $brand)
-                TextField("Model", text: $model)
+                TextField("Marca", text: $brand)
+                TextField("Modelo", text: $model)
             }
-            Section("Client") {
+            Section("Cliente") {
                 clientPicker
             }
         }
     }
 
     var clientPicker: some View {
-        Picker("Client", selection: $selectedClientID) {
-            Text("Select a client").tag(nil as UUID?)
+        Picker("Cliente", selection: $selectedClientID) {
+            Text("Seleccionar cliente").tag(nil as UUID?)
             ForEach(VehicleFormView.clientOptions) { client in
                 Text(client.name).tag(client.id as UUID?)
             }
@@ -113,10 +113,10 @@ extension VehicleFormView {
     }
 }
 
-#Preview("New Vehicle") {
+#Preview("Nuevo vehículo") {
     VehicleFormView(model: VehicleFormView.mockNew())
 }
 
-#Preview("Edit Vehicle") {
+#Preview("Editar vehículo") {
     VehicleFormView(model: VehicleFormView.mockEdit())
 }
