@@ -40,7 +40,6 @@ private extension DashboardView {
                 header(model)
                 occupancyCard(model)
                 statsGrid(model)
-                revenueBanner(model)
             }
             .padding()
         }
@@ -123,9 +122,15 @@ private extension DashboardView {
                 color: .orange
             )
             miniCard(
+                icon: "exclamationmark.circle.fill",
+                value: "\(model.totalOwed.formatted(.currency(code: "EUR")))",
+                label: "€ pendientes",
+                color: .red
+            )
+            miniCard(
                 icon: "eurosign.circle.fill",
                 value: "\(model.monthlyRevenue.formatted(.currency(code: "EUR")))",
-                label: "al mes",
+                label: "Facturación/mes",
                 color: .green
             )
         }
@@ -148,26 +153,6 @@ private extension DashboardView {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
 
-    func revenueBanner(_ model: Model) -> some View {
-        HStack {
-            Image(systemName: "chart.line.uptrend.xyaxis")
-                .font(.title)
-                .foregroundStyle(.green)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Facturación estimada")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("\(model.monthlyRevenue.formatted(.currency(code: "EUR")))/mes")
-                    .font(.headline)
-                    .bold()
-            }
-            Spacer()
-        }
-        .padding()
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-    }
-}
-
 // MARK: - Subtypes
 extension DashboardView {
     struct Model {
@@ -177,6 +162,7 @@ extension DashboardView {
         let totalClients: Int
         let totalAssignments: Int
         let pendingPayments: Int
+        let totalOwed: Double
         let monthlyRevenue: Double
     }
 
@@ -189,7 +175,8 @@ extension DashboardView {
     static let mockModel = Model(
         totalSpots: 6, occupiedSpots: 2, freeSpots: 4,
         totalClients: 3, totalAssignments: 2,
-        pendingPayments: 1, monthlyRevenue: 155
+        pendingPayments: 1, totalOwed: 30,
+        monthlyRevenue: 155
     )
 
     static var effectiveMockModel: Model {
@@ -217,6 +204,7 @@ extension DashboardView {
                 totalClients: activeClients,
                 totalAssignments: activeAssignments.count,
                 pendingPayments: pending,
+                totalOwed: Double(pending) * 30.0,
                 monthlyRevenue: revenue
             )
         }
