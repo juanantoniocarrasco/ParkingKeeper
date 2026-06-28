@@ -73,10 +73,10 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 
 ## Fase 3: Features core
 
-- [ ] Dashboard (resumen: plazas ocupadas, pagos pendientes del mes)
-- [ ] Clients (list, detail, form, search)
-- [ ] Vehicles (list, form)
-- [ ] Spots (vista de parcela con estado libre/ocupada)
+- [x] Dashboard (resumen: plazas ocupadas, pagos pendientes del mes)
+- [x] Clients (list, detail, form, search)
+- [x] Vehicles (list, form)
+- [x] Spots (vista de parcela con estado libre/ocupada)
 
 ## Fase 4: Features de operación
 
@@ -106,7 +106,7 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 | 0 | ✓ | `b6412bb` |
 | 1 | ✓ | `de62d6f` |
 | 2 | ✓ | `ea784d0` |
-| 3 | — | — |
+| 3 | ✓ | `224a636` |
 | 4 | — | — |
 | 5 | — | — |
 | 6 | — | — |

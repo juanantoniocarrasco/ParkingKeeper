@@ -5,7 +5,7 @@ enum NavigationAssembler {
     static func buildView(for screen: PKScreen) -> some View {
         switch screen {
         case .dashboard:
-            placeholder(title: "Dashboard")
+            DashboardView()
                 .navigationTitle(title(for: screen))
         case .clientList:
             ClientListView()
@@ -20,7 +20,7 @@ enum NavigationAssembler {
         case .vehicleForm(let vehicle):
             VehicleFormView(model: VehicleViewMapper.toFormModel(vehicle))
         case .spotGrid:
-            placeholder(title: "Spots")
+            SpotGridView()
                 .navigationTitle(title(for: screen))
         case .assignmentList:
             placeholder(title: "Assignments")
