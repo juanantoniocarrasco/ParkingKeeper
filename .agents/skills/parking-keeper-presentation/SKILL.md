@@ -25,6 +25,29 @@ description: SwiftUI presentation architecture and PK design-system rules for Pa
 - Every new view must include a representative `#Preview` macro at the bottom of the file.
 - No direct model context or repository access inside views — use helpers or domain services injected through initializers.
 
+### ViewState pattern (MANDATORY)
+- Every data-driven view declares `@State private var viewState: ViewState`.
+- `ViewState` is a nested enum in the view (e.g. `enum ViewState { case loading; case loaded; case empty; case error(String) }`).
+- Views switch on `viewState` to render appropriate UI for each state.
+- Previews must show all relevant `ViewState` values.
+
+### View Model pattern (MANDATORY)
+- Views never reference domain entities directly. Each view defines a nested `struct Model` with all `let` properties.
+- The `Model` struct contains only the data the view needs to render — no domain logic, no unused fields.
+- A `ViewMapper` enum in the Presentation layer maps between domain entities and view models:
+  - `ViewMapper.toModel(_ entity: DomainEntity) -> ViewName.Model`
+  - `ViewMapper.toEntity(_ model: ViewName.Model) -> DomainEntity`
+- The `ViewMapper` file lives alongside view files in `<Feature>/Presentation/`.
+
+### Mock data for previews
+- Every domain entity must have a `static let mock` or `static func mock(...)` in an extension.
+- Mocks must be deterministic and represent realistic data.
+- Views use mocks to construct their `Model` for previews.
+
+### All properties private
+- All properties in a view struct body must be `private` unless external access is required.
+- This includes `@State`, `@Binding`, `@Environment`, `let` injected dependencies, etc.
+
 ### View Property Order
 
 Inside a view struct body, declare properties in this order:
@@ -59,18 +82,28 @@ Every SwiftUI view file must organize its `private extension` blocks in this ord
            let searchText: String
            let isLoading: Bool
        }
+       
+       enum ViewState {
+           case loading
+           case loaded([Client])
+           case empty
+           case error(String)
+       }
    }
    ```
 
-   The `#Preview` injects it with mock data:
+   The `#Preview` injects mock data for each state:
 
    ```swift
-   #Preview {
-       ClientListView(model: .init(clients: [.mock()], searchText: "", isLoading: false))
+   #Preview("Loaded") {
+       ClientListView()
+   }
+   #Preview("Empty") {
+       ClientListView()
    }
    ```
 
-8. `#Preview` — at the end of the file
+8. `#Preview` — at the end of the file, with named variants for each state
 
 Extensions should be `private extension` unless the types/members are used externally. Standalone helper views in the same file go between the main view and its extensions.
 
@@ -89,5 +122,11 @@ Split files that exceed roughly 250 lines or start mixing unrelated concerns.
 ## Presentation DoD
 - Presentation boundaries are respected (no data access from views).
 - UI state ownership is clear and single-source (via `@State` for single views, `@Observable` ViewModel only for shared state).
+- Views follow body-as-index pattern.
+- `ViewState` enum and `Model` struct are defined for data-driven views.
+- `ViewMapper` exists if the view uses domain entities.
+- Domain entities have `mock` data.
+- All relevant `ViewState` values are covered by previews.
+- All view properties are `private`.
 - Localized strings and constants are organized correctly.
 - Representative `#Preview` is present for new views.

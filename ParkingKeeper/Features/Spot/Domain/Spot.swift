@@ -31,3 +31,12 @@ enum SpotStatus: String, Codable {
     case free
     case occupied
 }
+
+extension Spot {
+    static let mockSpot1 = Spot(id: UUID(uuidString: "00000000-0000-0000-0002-000000000001")!, number: 1)
+    static let mockSpot2 = Spot(id: UUID(uuidString: "00000000-0000-0000-0002-000000000002")!, number: 2, status: .occupied)
+    static let mockSpot3 = Spot(id: UUID(uuidString: "00000000-0000-0000-0002-000000000003")!, number: 3)
+    static let mockSpot4 = Spot(id: UUID(uuidString: "00000000-0000-0000-0002-000000000004")!, number: 4, status: .occupied)
+    static let mockSpot5 = Spot(id: UUID(uuidString: "00000000-0000-0000-0002-000000000005")!, number: 5)
+    static let mockSpot6 = Spot(id: UUID(uuidString: "00000000-0000-0000-0002-000000000006")!, number: 6)
+}

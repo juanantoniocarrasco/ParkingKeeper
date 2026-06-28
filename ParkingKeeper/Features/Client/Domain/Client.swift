@@ -41,3 +41,27 @@ struct Client: Identifiable, Hashable {
         )
     }
 }
+
+extension Client {
+    static let mockMaria = Client(
+        id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
+        name: "Maria Garcia",
+        phone: "612345678",
+        email: "maria@example.com",
+        notes: "Prefiere pago por bizum"
+    )
+
+    static let mockCarlos = Client(
+        id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!,
+        name: "Carlos Lopez",
+        phone: "698765432",
+        email: "carlos@example.com"
+    )
+
+    static let mockAna = Client(
+        id: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!,
+        name: "Ana Martinez",
+        phone: "655123789",
+        notes: "Plaza 3 fija desde 2024"
+    )
+}

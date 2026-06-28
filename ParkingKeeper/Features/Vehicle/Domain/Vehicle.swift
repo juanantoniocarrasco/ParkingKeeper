@@ -36,3 +36,26 @@ struct Vehicle: Identifiable, Hashable {
         )
     }
 }
+
+extension Vehicle {
+    static let mockSeatLeon = Vehicle(
+        id: UUID(uuidString: "00000000-0000-0000-0001-000000000001")!,
+        licensePlate: "1234ABC",
+        brand: "Seat",
+        model: "Leon"
+    )
+
+    static let mockRenault = Vehicle(
+        id: UUID(uuidString: "00000000-0000-0000-0001-000000000002")!,
+        licensePlate: "5678DEF",
+        brand: "Renault",
+        model: "Clio"
+    )
+
+    static let mockToyota = Vehicle(
+        id: UUID(uuidString: "00000000-0000-0000-0001-000000000003")!,
+        licensePlate: "9012GHI",
+        brand: "Toyota",
+        model: "Corolla"
+    )
+}

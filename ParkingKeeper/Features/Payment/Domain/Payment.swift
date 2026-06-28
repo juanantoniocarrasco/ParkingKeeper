@@ -56,3 +56,27 @@ enum PaymentMethod: String, Codable {
     case cash
     case bizum
 }
+
+extension Payment {
+    static let mockJanuary = Payment(
+        id: UUID(uuidString: "00000000-0000-0000-0004-000000000001")!,
+        assignmentID: Assignment.mockActive.id,
+        amount: 75.0,
+        method: .bizum,
+        date: Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 10))!,
+        periodMonths: 1,
+        periodStartDate: Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 1))!,
+        periodEndDate: Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 31))!
+    )
+
+    static let mockFebruary = Payment(
+        id: UUID(uuidString: "00000000-0000-0000-0004-000000000002")!,
+        assignmentID: Assignment.mockActive.id,
+        amount: 75.0,
+        method: .cash,
+        date: Calendar.current.date(from: DateComponents(year: 2026, month: 2, day: 5))!,
+        periodMonths: 1,
+        periodStartDate: Calendar.current.date(from: DateComponents(year: 2026, month: 2, day: 1))!,
+        periodEndDate: Calendar.current.date(from: DateComponents(year: 2026, month: 2, day: 28))!
+    )
+}

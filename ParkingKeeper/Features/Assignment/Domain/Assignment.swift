@@ -46,3 +46,24 @@ struct Assignment: Identifiable, Hashable {
         )
     }
 }
+
+extension Assignment {
+    static let mockActive = Assignment(
+        id: UUID(uuidString: "00000000-0000-0000-0003-000000000001")!,
+        clientID: Client.mockMaria.id,
+        vehicleID: Vehicle.mockSeatLeon.id,
+        spotID: Spot.mockSpot2.id,
+        startDate: Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 1))!,
+        monthlyRate: 75.0
+    )
+
+    static let mockHistoric = Assignment(
+        id: UUID(uuidString: "00000000-0000-0000-0003-000000000002")!,
+        clientID: Client.mockCarlos.id,
+        vehicleID: Vehicle.mockToyota.id,
+        spotID: Spot.mockSpot4.id,
+        startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 6, day: 1))!,
+        endDate: Calendar.current.date(from: DateComponents(year: 2025, month: 12, day: 31))!,
+        monthlyRate: 80.0
+    )
+}

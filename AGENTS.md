@@ -38,6 +38,11 @@ No SwiftLint is configured.
 - Domain entities are immutable value types (all properties are `let`). Each entity provides an `updated(...)` method that returns a new instance with selective field changes.
 - Views manage their own presentation logic. Use `@State` for local state and helper types when a view grows too large. `@Observable final class` ViewModels are reserved exclusively for sharing state across two or more views. Never create a ViewModel for a single view.
 - All views follow the body-as-index pattern: `body` only composes subviews declared as `var` or `func` in a `private extension ViewName` under `// MARK: - Subviews`. Inline view trees in `body` beyond trivial one-child wrappers (e.g. `NavigationStack { detail }`) are forbidden.
+- Views never depend on domain entities directly. Each view defines its own nested `struct Model` (immutable, all `let`) containing only the data the view needs.
+- A `ViewMapper` enum in the Presentation layer converts between domain entities and view models (Domain → Model, Model → Domain).
+- Every domain entity must have a `static let mock` or `static func mock(...)` extension for previews, demos, and debug.
+- Views use `@State private var viewState: ViewState` where `ViewState` is a nested enum defining the view's possible states (e.g. `.loading`, `.loaded`, `.empty`, `.error(message)`). Previews must show all relevant states.
+- All view properties (state, bindings, injected dependencies) must be `private` unless external access is required.
 - Inject dependencies through initializers.
 - Prefer `async/await` and use `@MainActor` for UI-observed state mutation.
 - Keep tests focused on outcomes; use deterministic assertions.
