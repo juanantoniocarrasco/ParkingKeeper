@@ -2,7 +2,9 @@ import SwiftUI
 
 struct AssignmentDetailView: View {
     @Environment(NavigationCoordinator.self) private var coordinator
+    @Environment(\.dismiss) private var dismiss
     @State private var viewState: ViewState
+    @State private var showingBajaAlert = false
 
     private let assignmentID: UUID
 
@@ -14,6 +16,12 @@ struct AssignmentDetailView: View {
     var body: some View {
         content
             .toolbar { toolbar }
+            .alert("Dar de baja", isPresented: $showingBajaAlert) {
+                Button("Cancelar", role: .cancel) {}
+                Button("Dar de baja", role: .destructive) { confirmBaja() }
+            } message: {
+                Text("¿Confirmas que quieres dar de baja esta asignación? La plaza quedará libre.")
+            }
     }
 }
 
@@ -22,18 +30,8 @@ private extension AssignmentDetailView {
     var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             if case .loaded(let model) = viewState, model.isActive {
-                Button("Dar de baja") {
-                    coordinator.navigationPath.append(
-                        PKScreen.assignmentForm(Assignment(
-                            id: model.id,
-                            clientID: model.clientID,
-                            vehicleID: model.vehicleID,
-                            spotID: model.spotID,
-                            startDate: Date(),
-                            endDate: Date(),
-                            monthlyRate: model.monthlyRate
-                        ))
-                    )
+                Button("Dar de baja", role: .destructive) {
+                    showingBajaAlert = true
                 }
             }
         }
@@ -87,6 +85,13 @@ private extension AssignmentDetailView {
             }
         }
         .navigationTitle("Asignación")
+    }
+}
+
+// MARK: - Methods
+private extension AssignmentDetailView {
+    func confirmBaja() {
+        dismiss()
     }
 }
 

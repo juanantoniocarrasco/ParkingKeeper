@@ -6,13 +6,20 @@ enum DemoData {
     /// No hagas commit con esta propiedad a `true`.
     static let isEnabled = true
 
-    // MARK: - Spots (40)
+    // MARK: - Spots (40, 28 ocupadas en patrón alternado)
+
+    /// Plazas ocupadas distribuidas de forma natural (parking con 10 años de uso)
+    private static let occupiedSpotNumbers: Set<Int> = Set([
+        1, 2, 3, 5, 6, 8, 10, 11, 13, 14,
+        16, 17, 19, 21, 22, 23, 25, 26, 28,
+        29, 31, 32, 34, 35, 36, 38, 39, 40,
+    ])
 
     static let spots: [Spot] = (1...40).map { i in
         Spot(
             id: UUID(),
             number: i,
-            status: i <= 28 ? .occupied : .free
+            status: occupiedSpotNumbers.contains(i) ? .occupied : .free
         )
     }
 
