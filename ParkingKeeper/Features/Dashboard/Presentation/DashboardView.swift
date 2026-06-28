@@ -37,37 +37,56 @@ private extension DashboardView {
     func loadedView(_ model: Model) -> some View {
         ScrollView {
             VStack(spacing: 16) {
-                statCard(
-                    title: "Plazas ocupadas",
-                    value: "\(model.occupiedSpots)/\(model.totalSpots)",
-                    systemImage: "parkingsign",
-                    color: .blue
-                )
-                statCard(
-                    title: "Pagos pendientes",
-                    value: "\(model.pendingPayments)",
-                    systemImage: "creditcard",
-                    color: .orange
-                )
+                statGrid(model)
+                revenueCard(model)
             }
             .padding()
         }
     }
 
-    func statCard(title: String, value: String, systemImage: String, color: Color) -> some View {
+    func statGrid(_ model: Model) -> some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+            statCard(title: "Plazas totales", value: "\(model.totalSpots)", systemImage: "parkingsign", color: .blue)
+            statCard(title: "Ocupadas", value: "\(model.occupiedSpots)", systemImage: "car.fill", color: .red)
+            statCard(title: "Libres", value: "\(model.freeSpots)", systemImage: "car", color: .green)
+            statCard(title: "Clientes", value: "\(model.totalClients)", systemImage: "person.2", color: .indigo)
+            statCard(title: "Asignaciones", value: "\(model.totalAssignments)", systemImage: "arrow.triangle.swap", color: .purple)
+            statCard(title: "Pendientes", value: "\(model.pendingPayments)", systemImage: "creditcard", color: .orange)
+        }
+    }
+
+    func revenueCard(_ model: Model) -> some View {
         VStack(spacing: 8) {
-            Image(systemName: systemImage)
-                .font(.largeTitle)
-                .foregroundStyle(color)
-            Text(value)
-                .font(.title)
-                .bold()
-            Text(title)
+            Text("Facturación mensual estimada")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            Text("\(model.monthlyRevenue.formatted(.currency(code: "EUR")))")
+                .font(.title)
+                .bold()
+                .foregroundStyle(.green)
+            Text("\(model.totalAssignments) plazas activas")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    func statCard(title: String, value: String, systemImage: String, color: Color) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: systemImage)
+                .font(.title3)
+                .foregroundStyle(color)
+            Text(value)
+                .font(.title2)
+                .bold()
+            Text(title)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
         .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
     }
 }
@@ -77,7 +96,11 @@ extension DashboardView {
     struct Model {
         let totalSpots: Int
         let occupiedSpots: Int
+        let freeSpots: Int
+        let totalClients: Int
+        let totalAssignments: Int
         let pendingPayments: Int
+        let monthlyRevenue: Double
     }
 
     enum ViewState {
@@ -87,18 +110,38 @@ extension DashboardView {
     }
 
     static let mockModel = Model(
-        totalSpots: 6,
-        occupiedSpots: 2,
-        pendingPayments: 1
+        totalSpots: 6, occupiedSpots: 2, freeSpots: 4,
+        totalClients: 3, totalAssignments: 2,
+        pendingPayments: 1, monthlyRevenue: 155
     )
 
     static var effectiveMockModel: Model {
         if DemoData.isEnabled {
             let occupied = DemoData.spots.filter { $0.status == .occupied }.count
-            let paidMonths = Set(DemoData.payments.map { Calendar.current.component(.month, from: $0.periodStartDate) })
+            let total = DemoData.spots.count
             let currentMonth = Calendar.current.component(.month, from: Date())
-            let pending = DemoData.assignments.count * currentMonth - DemoData.payments.count
-            return Model(totalSpots: DemoData.spots.count, occupiedSpots: occupied, pendingPayments: max(0, pending))
+
+            var pending = 0
+            for assignment in DemoData.assignments {
+                let startMonth = Calendar.current.component(.month, from: assignment.startDate)
+                let expected = max(0, currentMonth - startMonth + 1)
+                let actual = DemoData.payments.filter { $0.assignmentID == assignment.id }.count
+                pending += max(0, expected - actual)
+            }
+
+            let revenue = DemoData.assignments
+                .filter { $0.endDate == nil }
+                .reduce(0) { $0 + $1.monthlyRate }
+
+            return Model(
+                totalSpots: total,
+                occupiedSpots: occupied,
+                freeSpots: total - occupied,
+                totalClients: DemoData.clients.count,
+                totalAssignments: DemoData.assignments.count,
+                pendingPayments: pending,
+                monthlyRevenue: revenue
+            )
         }
         return mockModel
     }
