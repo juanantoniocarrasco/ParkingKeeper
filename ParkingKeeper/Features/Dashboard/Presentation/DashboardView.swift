@@ -121,24 +121,23 @@ extension DashboardView {
             let total = DemoData.spots.count
             let currentMonth = Calendar.current.component(.month, from: Date())
 
+            let activeAssignments = DemoData.assignments.filter { $0.endDate == nil }
+            let revenue = activeAssignments.reduce(0) { $0 + $1.monthlyRate }
+
             var pending = 0
-            for assignment in DemoData.assignments where assignment.endDate == nil {
+            for assignment in activeAssignments {
                 let startMonth = Calendar.current.component(.month, from: assignment.startDate)
                 let expected = max(0, currentMonth - startMonth + 1)
                 let actual = DemoData.payments.filter { $0.assignmentID == assignment.id }.count
                 pending += max(0, expected - actual)
             }
 
-            let revenue = DemoData.assignments
-                .filter { $0.endDate == nil }
-                .reduce(0) { $0 + $1.monthlyRate }
-
             return Model(
                 totalSpots: total,
                 occupiedSpots: occupied,
                 freeSpots: total - occupied,
                 totalClients: DemoData.clients.count,
-                totalAssignments: DemoData.assignments.count,
+                totalAssignments: activeAssignments.count,
                 pendingPayments: pending,
                 monthlyRevenue: revenue
             )

@@ -4,7 +4,7 @@ enum DemoData {
 
     /// Cambia a `true` para usar datos de demo en toda la app
     /// No hagas commit con esta propiedad a `true`.
-    static let isEnabled = false
+    static let isEnabled = true
 
     // MARK: - Spots (40)
 
