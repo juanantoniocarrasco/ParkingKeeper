@@ -48,7 +48,7 @@ private extension DashboardView {
     func header(_ model: Model) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Parking Keeper")
+                Text("Parking de caravanas Los Ciruelos")
                     .font(.title2)
                     .bold()
                 Text(Date().formatted(date: .long, time: .omitted))
