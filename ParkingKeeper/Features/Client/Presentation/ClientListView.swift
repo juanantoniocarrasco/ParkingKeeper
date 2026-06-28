@@ -8,30 +8,33 @@ struct ClientListView: View {
     var body: some View {
         content
             .searchable(text: $searchText, prompt: "Search clients")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        coordinator.navigationPath.append(PKScreen.clientForm(nil))
-                    } label: {
-                        Label("Add Client", systemImage: "plus")
-                    }
-                }
-            }
+            .toolbar { toolbar }
     }
 }
 
 // MARK: - Subviews
 private extension ClientListView {
+    var toolbar: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button {
+                coordinator.navigationPath.append(PKScreen.clientForm(nil))
+            } label: {
+                Label("Add Client", systemImage: "plus")
+            }
+        }
+    }
+
+    @ViewBuilder
     var content: some View {
         switch viewState {
         case .loading:
-            return AnyView(loadingView)
+            loadingView
         case .loaded(let clients):
-            return AnyView(clientList(clients))
+            loadedList(clients)
         case .empty:
-            return AnyView(emptyView)
+            emptyView
         case .error(let message):
-            return AnyView(errorView(message))
+            errorView(message)
         }
     }
 
@@ -55,25 +58,24 @@ private extension ClientListView {
         )
     }
 
-    func clientList(_ clients: [ClientListRow]) -> some View {
+    @ViewBuilder
+    func loadedList(_ clients: [ClientListRow]) -> some View {
         let filtered = clients.filtered(by: searchText)
-        return Group {
-            if filtered.isEmpty {
-                emptySearchView
-            } else {
-                List(filtered) { row in
-                    NavigationLink(value: PKScreen.clientDetail(
-                        row.domainClient
-                    )) {
-                        clientRow(row)
-                    }
-                }
-            }
+        if filtered.isEmpty {
+            ContentUnavailableView.search(text: searchText)
+        } else {
+            list(filtered)
         }
     }
 
-    var emptySearchView: some View {
-        ContentUnavailableView.search(text: searchText)
+    func list(_ clients: [ClientListRow]) -> some View {
+        List(clients) { row in
+            NavigationLink(value: PKScreen.clientDetail(
+                Client(id: row.id, name: row.name, phone: row.phone, email: nil, notes: nil)
+            )) {
+                clientRow(row)
+            }
+        }
     }
 
     func clientRow(_ row: ClientListRow) -> some View {
@@ -95,12 +97,6 @@ extension ClientListView {
         let id: UUID
         let name: String
         let phone: String?
-        let domainClient: Client
-
-        func filtered(by searchText: String) -> Bool {
-            guard !searchText.isEmpty else { return true }
-            return name.localizedCaseInsensitiveContains(searchText)
-        }
     }
 
     enum ViewState {
@@ -111,19 +107,20 @@ extension ClientListView {
     }
 }
 
-extension [ClientListView.ClientListRow] {
+// MARK: - Array helpers
+private extension [ClientListView.ClientListRow] {
     func filtered(by searchText: String) -> [ClientListView.ClientListRow] {
         guard !searchText.isEmpty else { return self }
-        return filter { $0.filtered(by: searchText) }
+        return filter { $0.name.localizedCaseInsensitiveContains(searchText) }
     }
 }
 
 // MARK: - Mocks
 extension ClientListView {
     static let mocks: [ClientListRow] = [
-        .init(id: Client.mockMaria.id, name: Client.mockMaria.name, phone: Client.mockMaria.phone, domainClient: Client.mockMaria),
-        .init(id: Client.mockCarlos.id, name: Client.mockCarlos.name, phone: Client.mockCarlos.phone, domainClient: Client.mockCarlos),
-        .init(id: Client.mockAna.id, name: Client.mockAna.name, phone: Client.mockAna.phone, domainClient: Client.mockAna),
+        .init(id: Client.mockMaria.id, name: Client.mockMaria.name, phone: Client.mockMaria.phone),
+        .init(id: Client.mockCarlos.id, name: Client.mockCarlos.name, phone: Client.mockCarlos.phone),
+        .init(id: Client.mockAna.id, name: Client.mockAna.name, phone: Client.mockAna.phone),
     ]
 }
 

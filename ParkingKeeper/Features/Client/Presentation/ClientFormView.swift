@@ -7,35 +7,39 @@ struct ClientFormView: View {
     @State private var email: String
     @State private var notes: String
 
-    private let client: Client?
+    private let model: Model?
 
-    init(client: Client?) {
-        self.client = client
-        _name = State(initialValue: client?.name ?? "")
-        _phone = State(initialValue: client?.phone ?? "")
-        _email = State(initialValue: client?.email ?? "")
-        _notes = State(initialValue: client?.notes ?? "")
+    init(model: Model?) {
+        self.model = model
+        _name = State(initialValue: model?.name ?? "")
+        _phone = State(initialValue: model?.phone ?? "")
+        _email = State(initialValue: model?.email ?? "")
+        _notes = State(initialValue: model?.notes ?? "")
     }
 
     var body: some View {
         NavigationStack {
             form
-                .navigationTitle(client != nil ? "Edit Client" : "New Client")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Save") { save() }
-                            .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
-                    }
-                }
+                .navigationTitle(model != nil ? "Edit Client" : "New Client")
+                .toolbar { toolbar }
         }
     }
 }
 
 // MARK: - Subviews
 private extension ClientFormView {
+    var toolbar: some ToolbarContent {
+        Group {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") { dismiss() }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") { save() }
+                    .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+        }
+    }
+
     var form: some View {
         Form {
             Section("Client Information") {
@@ -63,10 +67,35 @@ private extension ClientFormView {
     }
 }
 
+// MARK: - Subtypes
+extension ClientFormView {
+    struct Model {
+        let id: UUID
+        let name: String?
+        let phone: String?
+        let email: String?
+        let notes: String?
+    }
+
+    static func mockNew() -> Model {
+        Model(id: UUID(), name: nil, phone: nil, email: nil, notes: nil)
+    }
+
+    static func mockEdit() -> Model {
+        Model(
+            id: Client.mockMaria.id,
+            name: Client.mockMaria.name,
+            phone: Client.mockMaria.phone,
+            email: Client.mockMaria.email,
+            notes: Client.mockMaria.notes
+        )
+    }
+}
+
 #Preview("New Client") {
-    ClientFormView(client: nil)
+    ClientFormView(model: ClientFormView.mockNew())
 }
 
 #Preview("Edit Client") {
-    ClientFormView(client: Client.mockMaria)
+    ClientFormView(model: ClientFormView.mockEdit())
 }

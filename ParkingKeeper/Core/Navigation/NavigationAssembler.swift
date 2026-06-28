@@ -13,7 +13,7 @@ enum NavigationAssembler {
         case .clientDetail(let client):
             ClientDetailView(clientID: client.id)
         case .clientForm(let client):
-            ClientFormView(client: client)
+            ClientFormView(model: ClientViewMapper.toFormModel(client))
         case .vehicleList:
             placeholder(title: "Vehicles")
                 .navigationTitle(title(for: screen))

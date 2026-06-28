@@ -13,28 +13,39 @@ struct ClientDetailView: View {
 
     var body: some View {
         content
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Edit") {
-                        coordinator.navigationPath.append(
-                            PKScreen.clientForm(viewState.client)
-                        )
-                    }
-                }
-            }
+            .toolbar { toolbar }
     }
 }
 
 // MARK: - Subviews
 private extension ClientDetailView {
+    var toolbar: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            if case .loaded(let model) = viewState {
+                Button("Edit") {
+                    coordinator.navigationPath.append(
+                        PKScreen.clientForm(Client(
+                            id: model.id,
+                            name: model.name,
+                            phone: model.phone,
+                            email: model.email,
+                            notes: model.notes
+                        ))
+                    )
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
     var content: some View {
         switch viewState {
         case .loading:
-            return AnyView(loadingView)
+            loadingView
         case .loaded(let model):
-            return AnyView(loadedView(model))
+            loadedView(model)
         case .error(let message):
-            return AnyView(errorView(message))
+            errorView(message)
         }
     }
 
@@ -74,6 +85,7 @@ private extension ClientDetailView {
 // MARK: - Subtypes
 extension ClientDetailView {
     struct Model {
+        let id: UUID
         let name: String
         let phone: String?
         let email: String?
@@ -84,16 +96,10 @@ extension ClientDetailView {
         case loading
         case loaded(Model)
         case error(String)
-
-        var client: Client? {
-            if case .loaded(let model) = self {
-                return Client(name: model.name, phone: model.phone, email: model.email, notes: model.notes)
-            }
-            return nil
-        }
     }
 
     static let mockModel = Model(
+        id: Client.mockMaria.id,
         name: Client.mockMaria.name,
         phone: Client.mockMaria.phone,
         email: Client.mockMaria.email,
