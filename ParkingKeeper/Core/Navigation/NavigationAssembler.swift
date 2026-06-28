@@ -8,14 +8,12 @@ enum NavigationAssembler {
             placeholder(title: "Dashboard")
                 .navigationTitle(title(for: screen))
         case .clientList:
-            placeholder(title: "Clients")
+            ClientListView()
                 .navigationTitle(title(for: screen))
         case .clientDetail(let client):
-            placeholder(title: "Client: \(client.name)")
-                .navigationTitle(client.name)
+            ClientDetailView(clientID: client.id)
         case .clientForm(let client):
-            placeholder(title: client != nil ? "Edit Client" : "New Client")
-                .navigationTitle(client?.name ?? "New Client")
+            ClientFormView(client: client)
         case .vehicleList:
             placeholder(title: "Vehicles")
                 .navigationTitle(title(for: screen))
@@ -61,7 +59,7 @@ enum NavigationAssembler {
         VStack {
             Text(title)
                 .font(.largeTitle)
-            Text("Coming in Phase 3")
+            Text("Coming soon")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
