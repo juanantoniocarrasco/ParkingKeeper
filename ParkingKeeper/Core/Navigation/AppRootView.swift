@@ -6,9 +6,15 @@ struct AppRootView: View {
     var body: some View {
         NavigationSplitView {
             sidebar
+#if os(macOS)
+                .navigationSplitViewColumnWidth(min: 180, ideal: 200)
+#endif
         } detail: {
             detail
         }
+#if os(macOS)
+        .navigationSplitViewStyle(.prominentDetail)
+#endif
     }
 }
 
@@ -32,6 +38,7 @@ private extension AppRootView {
                 sidebarRow(.annualGrid)
             }
         }
+        .listStyle(.sidebar)
     }
 
     var detail: some View {

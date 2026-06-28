@@ -88,7 +88,7 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 
 - [x] Receipt (vista/PDF/share derivada de Payment)
 - [ ] CloudKit sync entre iOS y macOS — pospuesto (requiere cuenta Apple Developer pagada)
-- [ ] Adaptaciones UI para macOS
+- [x] Adaptaciones UI para macOS
 
 ## Fase 6: Pulido
 
