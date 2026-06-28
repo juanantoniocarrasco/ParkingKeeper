@@ -89,6 +89,7 @@ This repository may be public. Never commit:
 Domain details needed during development stay in agent conversation context only.
 
 ## Recommended Agent Workflow
+- **At the start of every conversation, read `ROADMAP.md`** to pick up where the last session left off.
 - Inspect nearby files before editing to match local architecture and style.
 - When the user intent is planning rather than implementation, proactively load `grill-me` even if the user does not mention it by name.
 - Use `grill-me` for design reviews, implementation planning, architecture tradeoffs, and ambiguity reduction before coding.
