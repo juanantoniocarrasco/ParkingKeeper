@@ -47,10 +47,14 @@ private extension ClientFormView {
                     .textContentType(.name)
                 TextField("Phone", text: $phone)
                     .textContentType(.telephoneNumber)
+#if os(iOS)
                     .keyboardType(.phonePad)
+#endif
                 TextField("Email", text: $email)
                     .textContentType(.emailAddress)
+#if os(iOS)
                     .keyboardType(.emailAddress)
+#endif
             }
             Section("Notes") {
                 TextEditor(text: $notes)
