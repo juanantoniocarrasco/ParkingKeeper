@@ -103,7 +103,7 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 
 | Fase | Completada | Commit |
 |------|-----------|--------|
-| 0 | — | — |
+| 0 | ✓ | `b6412bb` |
 | 1 | — | — |
 | 2 | — | — |
 | 3 | — | — |
