@@ -41,21 +41,17 @@ private extension ParkingKeeperApp {
     func appCommands() -> some Commands {
         CommandGroup(replacing: .newItem) {
             Button("Nuevo cliente") {
-                coordinator.selectedTab = .clients
-                coordinator.clientsPath = NavigationPath()
-                coordinator.clientsPath.append(PKScreen.clientForm(nil))
+                coordinator.selectedTab = .gestion
+                coordinator.gestionPath = NavigationPath()
+                coordinator.gestionPath.append(PKScreen.clientForm(nil))
             }
             .keyboardShortcut("n")
         }
         CommandMenu("Ir a") {
             Button("Dashboard") { coordinator.selectedTab = .dashboard }
                 .keyboardShortcut("1")
-            Button("Clientes") { coordinator.selectedTab = .clients }
+            Button("Gestión") { coordinator.selectedTab = .gestion }
                 .keyboardShortcut("2")
-            Button("Plazas") { coordinator.selectedTab = .spots }
-                .keyboardShortcut("3")
-            Button("Pagos") { coordinator.selectedTab = .payments }
-                .keyboardShortcut("4")
         }
     }
 }

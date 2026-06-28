@@ -1,27 +1,15 @@
 import SwiftUI
 
 struct DashboardView: View {
-    @Environment(NavigationCoordinator.self) private var coordinator
     @State private var viewState: ViewState = .loaded(DashboardView.effectiveMockModel)
 
     var body: some View {
         content
-            .toolbar { toolbar }
     }
 }
 
 // MARK: - Subviews
 private extension DashboardView {
-    var toolbar: some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
-            Button {
-                coordinator.navigate(to: .annualGrid)
-            } label: {
-                Label("Cuadrante", systemImage: "tablecells")
-            }
-        }
-    }
-
     @ViewBuilder
     var content: some View {
         switch viewState {

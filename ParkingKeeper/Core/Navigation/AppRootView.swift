@@ -9,9 +9,7 @@ struct AppRootView: View {
             set: { coordinator.selectedTab = $0 }
         )) {
             dashboardTab
-            clientsTab
-            spotsTab
-            paymentsTab
+            gestionTab
         }
     }
 }
@@ -19,7 +17,10 @@ struct AppRootView: View {
 // MARK: - Subviews
 private extension AppRootView {
     var dashboardTab: some View {
-        NavigationStack(path: coordinator.currentPath) {
+        NavigationStack(path: Binding(
+            get: { coordinator.dashboardPath },
+            set: { coordinator.dashboardPath = $0 }
+        )) {
             DashboardView()
                 .navigationTitle("Dashboard")
                 .navigationDestination(for: PKScreen.self) { screen in
@@ -32,46 +33,20 @@ private extension AppRootView {
         .tag(AppTab.dashboard)
     }
 
-    var clientsTab: some View {
-        NavigationStack(path: coordinator.currentPath) {
-            ClientListView()
-                .navigationTitle("Clientes")
+    var gestionTab: some View {
+        NavigationStack(path: Binding(
+            get: { coordinator.gestionPath },
+            set: { coordinator.gestionPath = $0 }
+        )) {
+            GestionView()
                 .navigationDestination(for: PKScreen.self) { screen in
                     NavigationAssembler.buildView(for: screen)
                 }
         }
         .tabItem {
-            Label(AppTab.clients.title, systemImage: AppTab.clients.icon)
+            Label(AppTab.gestion.title, systemImage: AppTab.gestion.icon)
         }
-        .tag(AppTab.clients)
-    }
-
-    var spotsTab: some View {
-        NavigationStack(path: coordinator.currentPath) {
-            SpotGridView()
-                .navigationTitle("Plazas")
-                .navigationDestination(for: PKScreen.self) { screen in
-                    NavigationAssembler.buildView(for: screen)
-                }
-        }
-        .tabItem {
-            Label(AppTab.spots.title, systemImage: AppTab.spots.icon)
-        }
-        .tag(AppTab.spots)
-    }
-
-    var paymentsTab: some View {
-        NavigationStack(path: coordinator.currentPath) {
-            PaymentListView()
-                .navigationTitle("Pagos")
-                .navigationDestination(for: PKScreen.self) { screen in
-                    NavigationAssembler.buildView(for: screen)
-                }
-        }
-        .tabItem {
-            Label(AppTab.payments.title, systemImage: AppTab.payments.icon)
-        }
-        .tag(AppTab.payments)
+        .tag(AppTab.gestion)
     }
 }
 
