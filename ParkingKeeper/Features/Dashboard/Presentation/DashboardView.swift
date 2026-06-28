@@ -122,7 +122,7 @@ extension DashboardView {
             let currentMonth = Calendar.current.component(.month, from: Date())
 
             var pending = 0
-            for assignment in DemoData.assignments {
+            for assignment in DemoData.assignments where assignment.endDate == nil {
                 let startMonth = Calendar.current.component(.month, from: assignment.startDate)
                 let expected = max(0, currentMonth - startMonth + 1)
                 let actual = DemoData.payments.filter { $0.assignmentID == assignment.id }.count

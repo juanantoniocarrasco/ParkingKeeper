@@ -4,7 +4,7 @@ enum DemoData {
 
     /// Cambia a `true` para usar datos de demo en toda la app
     /// No hagas commit con esta propiedad a `true`.
-    static let isEnabled = true
+    static let isEnabled = false
 
     // MARK: - Spots (40)
 
@@ -92,36 +92,75 @@ enum DemoData {
         )
     }
 
-    // MARK: - Assignments (28 active, matches occupied spots)
+    // MARK: - Assignments
 
-    static let assignments: [Assignment] = spots.prefix(28).enumerated().map { i, spot in
-        let client = clients[i % clients.count]
+    private static let startJan2024: Date = Calendar.current.date(from: DateComponents(year: 2024, month: 1, day: 1))!
+    private static let startJan2026: Date = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 1))!
+    private static let startFeb2026: Date = Calendar.current.date(from: DateComponents(year: 2026, month: 2, day: 1))!
+    private static let startMar2026: Date = Calendar.current.date(from: DateComponents(year: 2026, month: 3, day: 1))!
+    private static let startApr2026: Date = Calendar.current.date(from: DateComponents(year: 2026, month: 4, day: 1))!
+    private static let startMay2026: Date = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 1))!
+    private static let endDec2025: Date = Calendar.current.date(from: DateComponents(year: 2025, month: 12, day: 31))!
+
+    /// Índices de clientes con asignación, su fecha de inicio y si es histórica
+    private static let assignmentConfig: [(clientIndex: Int, start: Date, isHistoric: Bool)] = {
+        var config: [(Int, Date, Bool)] = []
+        for i in 0..<18 { config.append((i, startJan2026, false)) }
+        for i in 18..<20 { config.append((i, startJan2026, false)) }  // arrears: paid to Mar
+        config.append((20, startJan2026, false))  // arrears: paid to Feb
+        config.append((21, startFeb2026, false))  // late join
+        config.append((22, startMar2026, false))  // late join
+        config.append((23, startApr2026, false))  // late join
+        config.append((24, startMay2026, false))  // late join
+        for i in 25..<28 { config.append((i, startJan2026, false)) }  // arrears: paid to Feb/Mar
+        for i in 28..<32 { config.append((i, startJan2024, true)) }   // historic
+        return config
+    }()
+
+    static let assignments: [Assignment] = assignmentConfig.enumerated().map { i, cfg in
+        let client = clients[cfg.clientIndex]
         let vehicle = vehicles.first { $0.clientID == client.id } ?? vehicles[i]
-        let isHistoric = i >= 24
-        let startDate = Calendar.current.date(from: DateComponents(year: 2024, month: ((i % 12) + 1), day: 1))!
+        let spot = spots[i]
         return Assignment(
             clientID: client.id,
             vehicleID: vehicle.id,
             spotID: spot.id,
-            startDate: startDate,
-            endDate: isHistoric ? Calendar.current.date(from: DateComponents(year: 2025, month: 12, day: 31))! : nil,
+            startDate: cfg.start,
+            endDate: cfg.isHistoric ? endDec2025 : nil,
             monthlyRate: 30.0
         )
     }
 
-    // MARK: - Payments (January to June for most, some with delays)
+    // MARK: - Payments
+
+    /// paidUpToMonth por índice de asignación (índices 0-27 activas, 28-31 históricas)
+    private static let paidUpToConfig: [Int] = {
+        var cfg: [Int] = []
+        for _ in 0..<18 { cfg.append(6) }   // pagado hasta junio (al día)
+        for _ in 18..<20 { cfg.append(3) }  // pagado hasta marzo (atraso abril-junio)
+        cfg.append(2)                         // pagado hasta febrero (mucho atraso)
+        cfg.append(5)                         // empezó feb, pagado hasta mayo
+        cfg.append(5)                         // empezó mar, pagado hasta mayo
+        cfg.append(5)                         // empezó abr, pagado hasta mayo
+        cfg.append(5)                         // empezó may, pagado hasta mayo
+        for _ in 25..<28 { cfg.append(2) }   // pagado hasta febrero (mucho atraso)
+        for _ in 28..<32 { cfg.append(0) }   // históricas: sin pagos en 2026
+        return cfg
+    }()
 
     static let payments: [Payment] = {
         var result: [Payment] = []
-        for assignment in assignments {
-            let paidUpTo = paidUpToMonth(for: assignment)
-            for month in 1...paidUpTo {
+        for (i, assignment) in assignments.enumerated() {
+            let paidUpTo = paidUpToConfig[i]
+            guard paidUpTo > 0 else { continue }
+            let startMonth = Calendar.current.component(.month, from: assignment.startDate)
+            for month in startMonth...paidUpTo {
                 let start = Calendar.current.date(from: DateComponents(year: 2026, month: month, day: 1))!
                 let end = Calendar.current.date(from: DateComponents(year: 2026, month: month, day: 28))!
-        result.append(Payment(
-            assignmentID: assignment.id,
-            amount: 30.0,
-            method: month % 3 == 0 ? .cash : .bizum,
+                result.append(Payment(
+                    assignmentID: assignment.id,
+                    amount: 30.0,
+                    method: month % 3 == 0 ? .cash : .bizum,
                     date: start,
                     periodMonths: 1,
                     periodStartDate: start,
