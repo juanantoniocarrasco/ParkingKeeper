@@ -36,58 +36,148 @@ private extension DashboardView {
 
     func loadedView(_ model: Model) -> some View {
         ScrollView {
-            VStack(spacing: 16) {
-                statGrid(model)
-                revenueCard(model)
+            VStack(spacing: 20) {
+                header(model)
+                occupancyCard(model)
+                statsGrid(model)
+                revenueBanner(model)
             }
             .padding()
         }
     }
 
-    func statGrid(_ model: Model) -> some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            statCard(title: "Plazas totales", value: "\(model.totalSpots)", systemImage: "parkingsign", color: .blue)
-            statCard(title: "Ocupadas", value: "\(model.occupiedSpots)", systemImage: "car.fill", color: .red)
-            statCard(title: "Libres", value: "\(model.freeSpots)", systemImage: "car", color: .green)
-            statCard(title: "Clientes", value: "\(model.totalClients)", systemImage: "person.2", color: .indigo)
-            statCard(title: "Asignaciones", value: "\(model.totalAssignments)", systemImage: "arrow.triangle.swap", color: .purple)
-            statCard(title: "Pendientes", value: "\(model.pendingPayments)", systemImage: "creditcard", color: .orange)
-        }
-    }
-
-    func revenueCard(_ model: Model) -> some View {
-        VStack(spacing: 8) {
-            Text("Facturación mensual estimada")
+    func header(_ model: Model) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Parking Keeper")
+                    .font(.title2)
+                    .bold()
+                Text(Date().formatted(date: .long, time: .omitted))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Text("\(model.totalAssignments)")
+                .font(.system(size: 40, weight: .bold))
+                .foregroundStyle(.blue)
+            +
+            Text(" activas")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text("\(model.monthlyRevenue.formatted(.currency(code: "EUR")))")
-                .font(.title)
-                .bold()
-                .foregroundStyle(.green)
-            Text("\(model.totalAssignments) plazas activas")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 24)
-        .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
     }
 
-    func statCard(title: String, value: String, systemImage: String, color: Color) -> some View {
+    func occupancyCard(_ model: Model) -> some View {
+        let ratio = Double(model.occupiedSpots) / Double(model.totalSpots)
+        return HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .stroke(.quaternary, lineWidth: 8)
+                Circle()
+                    .trim(from: 0, to: ratio)
+                    .stroke(.blue, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                VStack(spacing: 2) {
+                    Text("\(model.occupiedSpots)/\(model.totalSpots)")
+                        .font(.title3)
+                        .bold()
+                    Text("ocupadas")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(width: 80, height: 80)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Ocupación")
+                    .font(.headline)
+                HStack(spacing: 16) {
+                    occupancyStat(color: .blue, label: "Ocupadas", value: model.occupiedSpots)
+                    occupancyStat(color: .green, label: "Libres", value: model.freeSpots)
+                }
+            }
+        }
+        .padding()
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    func occupancyStat(color: Color, label: String, value: Int) -> some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+            Text("\(value)")
+                .font(.title3)
+                .bold()
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    func statsGrid(_ model: Model) -> some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+            miniCard(
+                icon: "person.2.fill",
+                value: "\(model.totalClients)",
+                label: "Clientes",
+                color: .indigo
+            )
+            miniCard(
+                icon: "creditcard.fill",
+                value: "\(model.pendingPayments)",
+                label: "Pendientes",
+                color: .orange
+            )
+            miniCard(
+                icon: "eurosign.circle.fill",
+                value: "\(model.monthlyRevenue.formatted(.currency(code: "EUR")))",
+                label: "al mes",
+                color: .green
+            )
+            miniCard(
+                icon: "arrow.triangle.swap",
+                value: "\(model.totalAssignments)",
+                label: "Asignaciones",
+                color: .purple
+            )
+        }
+    }
+
+    func miniCard(icon: String, value: String, label: String, color: Color) -> some View {
         VStack(spacing: 8) {
-            Image(systemName: systemImage)
+            Image(systemName: icon)
                 .font(.title3)
                 .foregroundStyle(color)
             Text(value)
                 .font(.title2)
                 .bold()
-            Text(title)
-                .font(.caption2)
+            Text(label)
+                .font(.caption)
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
-        .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+        .padding(.vertical, 16)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    func revenueBanner(_ model: Model) -> some View {
+        HStack {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.title)
+                .foregroundStyle(.green)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Facturación estimada")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("\(model.monthlyRevenue.formatted(.currency(code: "EUR")))/mes")
+                    .font(.headline)
+                    .bold()
+            }
+            Spacer()
+        }
+        .padding()
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
 }
 

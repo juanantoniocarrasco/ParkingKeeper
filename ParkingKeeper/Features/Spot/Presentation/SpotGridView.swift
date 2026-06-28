@@ -46,20 +46,45 @@ private extension SpotGridView {
     }
 
     func loadedView(_ spots: [SpotItem]) -> some View {
-        let columns = [GridItem(.adaptive(minimum: 80, maximum: 100))]
-        return ScrollView {
-            LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(spots) { spot in
-                    spotCell(spot)
-                }
+        ScrollView {
+            VStack(spacing: 16) {
+                legend
+                grid(spots)
             }
             .padding()
         }
     }
 
+    var legend: some View {
+        HStack(spacing: 20) {
+            legendItem(color: .green, label: "Libre", icon: "car.fill")
+            legendItem(color: .red, label: "Ocupada", icon: "car")
+        }
+        .font(.caption)
+    }
+
+    func legendItem(color: Color, label: String, icon: String) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .foregroundStyle(color)
+            Text(label)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    func grid(_ spots: [SpotItem]) -> some View {
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 5)
+        return LazyVGrid(columns: columns, spacing: 8) {
+            ForEach(spots) { spot in
+                spotCell(spot)
+            }
+        }
+    }
+
     func spotCell(_ spot: SpotItem) -> some View {
-        Button {
-            if spot.status == .occupied {
+        let isFree = spot.status == .free
+        return Button {
+            if !isFree {
                 let assignment = DemoData.assignments.first { $0.spotID == spot.id && $0.endDate == nil }
                 if let a = assignment {
                     coordinator.navigate(to: .assignmentDetail(a))
@@ -67,19 +92,23 @@ private extension SpotGridView {
             }
         } label: {
             VStack(spacing: 4) {
-            Image(systemName: spot.status == .free ? "car.fill" : "car")
-                .font(.title2)
-                .foregroundStyle(spot.status == .free ? .green : .red)
-            Text("\(spot.number)")
-                .font(.caption)
-                .bold()
-            Text(spot.status == .free ? "Libre" : "Ocupada")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isFree ? .green.opacity(0.15) : .red.opacity(0.15))
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(isFree ? .green.opacity(0.4) : .red.opacity(0.4), lineWidth: 1.5)
+                    Image(systemName: isFree ? "car.fill" : "car")
+                        .font(.title3)
+                        .foregroundStyle(isFree ? .green : .red)
+                }
+                .frame(height: 60)
+
+                Text("\(spot.number)")
+                    .font(.caption)
+                    .bold()
+            }
         }
-        .frame(maxWidth: .infinity, minHeight: 70)
-        .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
-        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -121,4 +150,5 @@ extension SpotGridView {
 
 #Preview("Cargado") {
     SpotGridView()
+        .environment(NavigationCoordinator())
 }
