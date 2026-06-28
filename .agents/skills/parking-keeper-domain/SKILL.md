@@ -1,70 +1,38 @@
 ---
 name: parking-keeper-domain
-description: Domain logic rules for Parking Keeper. Use when implementing or refactoring business logic, use cases, domain error mapping, and domain-focused test coverage.
+description: Domain logic rules for Parking Keeper. Use when implementing or refactoring business logic, use cases, entity design, domain error mapping, or domain-focused test coverage.
 ---
 
 # Parking Keeper Domain
 
 ## Scope
-- In scope: business rules, deterministic domain transforms, domain error contracts, use cases.
-- Out of scope: SwiftUI layout/styling and persistence wiring details.
-
-## Domain
-
-Parking Keeper manages a parking business with these core domain concepts:
-
-- **Client**: name, phone, email, associated vehicles, notes.
-- **Vehicle**: license plate, brand, model, owner (Client).
-- **Spot**: parking space identified by number, status (free/occupied).
-- **Assignment**: links a Client, Vehicle, and Spot. Has `startDate`, `endDate` (optional, for historical tracking when a client leaves), and `monthlyRate` (per-client rate, not global).
-- **Payment**: records a payment for an Assignment. Covers 1..N months (advance, on-time, or late). Has `amount`, `method` (cash/bizum), `date`, and a `months` period. The receipt is derived from the Payment record.
-- No periodic automatic billing — Payments are recorded when the client actually pays.
-
-## Feature Logic
-
-Each entity has a dedicated `Logic` struct that holds all business functions for that entity. Views receive the `Logic` via initializer.
-
-```swift
-struct ClientLogic {
-    private let clientRepository: any ClientRepositoryProtocol
-    private let paymentRepository: any PaymentRepositoryProtocol
-
-    func validate(_ client: Client) throws { ... }
-    func monthsCovered(for client: Client) -> [MonthYear] { ... }
-    func hasOutstandingMonths(for client: Client, asOf: Date) -> [MonthYear] { ... }
-}
-
-struct AssignmentLogic {
-    private let repository: any AssignmentRepositoryProtocol
-
-    func isActive(_ assignment: Assignment) -> Bool { ... }
-    func isHistorical(_ assignment: Assignment) -> Bool { ... }
-}
-```
-
-## Conventions
-- Domain entities are value types (`struct`) unless identity is essential (`Hashable`/`Identifiable`).
-- Each entity gets a `FeatureLogic` struct (e.g., `ClientLogic`, `SpotLogic`) with all domain functions for that entity.
-- Logic structs receive repository protocols and other dependencies via initializer.
-- Domain errors are typed enums conforming to `Error`.
-- Business rules stay UI-agnostic and deterministic.
-- All domain logic must be testable without SwiftData or SwiftUI imports.
+- In scope: domain entities, feature logic structs, repository protocols, business rules, domain errors.
+- Out of scope: SwiftUI views, app navigation, SwiftData persistence details.
 
 ## Workflow
-1. Inspect nearby domain/logic files to match local architecture.
-2. Design entities and logic structs before wiring to Data or Presentation.
-3. Add or update focused domain tests.
-4. Run relevant tests.
+1. Inspect existing entities and logic structs for conventions.
+2. Design domain entities as immutable value types (all `let` properties).
+3. Provide `updated(...)` methods that return new instances with selective field changes.
+4. Define repository protocols in the Domain layer.
+5. Keep logic structs focused on business rules per entity.
+6. Run relevant tests.
+
+## Conventions
+- Domain entities are immutable `struct` types conforming to `Identifiable` and `Hashable`.
+- Each entity provides `func updated(...) -> Self` with optional parameters defaulting to current values.
+- Entity identifiers use `UUID`.
+- Repository protocols define the contract in `<Feature>/Domain/<Feature>RepositoryProtocol.swift`.
+- Feature logic structs live in `<Feature>/Domain/<Feature>Logic.swift`.
+- Domain layer never imports SwiftData or any data-layer framework.
+- Domain errors use explicit enum types, not raw strings.
 
 ## Cross-Skill Triggers
-- Load `parking-keeper-data` when domain contracts require repository or mapper changes.
-- Load `parking-keeper-presentation` when domain model changes affect view input contracts.
-- Load `parking-keeper-navigation` when domain outcomes drive navigation state transitions.
+- Load `parking-keeper-data` when repository protocol changes require data-layer updates.
+- Load `parking-keeper-presentation` when domain changes require view contract updates.
+- Load `parking-keeper-navigation` when feature logic drives route transitions.
 
 ## Domain DoD
-- Responsibilities are split by domain concern.
-- Domain logic remains UI-agnostic and deterministic.
-- Error mapping boundaries are explicit and consistent.
-- Tests cover normal flows and required edge cases.
-- Regression tests are added for fixed domain bugs.
+- Entities are immutable and include `updated(...)` methods.
+- Repository protocols are defined and used by logic structs.
+- Domain errors are typed.
 - Relevant tests pass.

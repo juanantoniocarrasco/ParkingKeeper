@@ -2,16 +2,16 @@ import Foundation
 import SwiftData
 
 @Model
-final class VehicleModel {
+final class VehiclePersistentModel {
     @Attribute(.unique) var id: UUID
     var licensePlate: String
     var brand: String?
     var model: String?
 
-    var client: ClientModel?
+    var client: ClientPersistentModel?
 
-    @Relationship(deleteRule: .nullify, inverse: \AssignmentModel.vehicle)
-    var assignments: [AssignmentModel] = []
+    @Relationship(deleteRule: .nullify, inverse: \AssignmentPersistentModel.vehicle)
+    var assignments: [AssignmentPersistentModel] = []
 
     init(
         id: UUID = UUID(),

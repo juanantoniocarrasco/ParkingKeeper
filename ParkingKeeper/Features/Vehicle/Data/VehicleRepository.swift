@@ -9,43 +9,43 @@ final class VehicleRepository: VehicleRepositoryProtocol {
     }
 
     func fetchAll() async throws -> [Vehicle] {
-        let descriptor = FetchDescriptor<VehicleModel>(sortBy: [SortDescriptor(\.licensePlate)])
+        let descriptor = FetchDescriptor<VehiclePersistentModel>(sortBy: [SortDescriptor(\.licensePlate)])
         let models = try modelContext.fetch(descriptor)
-        return models.map(VehicleMapper.toEntity)
+        return models.map(VehicleDataMapper.toEntity)
     }
 
     func fetch(by entityID: UUID) async throws -> Vehicle? {
-        let descriptor = FetchDescriptor<VehicleModel>(predicate: #Predicate { $0.id == entityID })
+        let descriptor = FetchDescriptor<VehiclePersistentModel>(predicate: #Predicate { $0.id == entityID })
         let models = try modelContext.fetch(descriptor)
-        return models.first.map(VehicleMapper.toEntity)
+        return models.first.map(VehicleDataMapper.toEntity)
     }
 
     func fetchByClient(_ clientID: UUID) async throws -> [Vehicle] {
-        let descriptor = FetchDescriptor<VehicleModel>(
+        let descriptor = FetchDescriptor<VehiclePersistentModel>(
             predicate: #Predicate { $0.client?.id == clientID },
             sortBy: [SortDescriptor(\.licensePlate)]
         )
         let models = try modelContext.fetch(descriptor)
-        return models.map(VehicleMapper.toEntity)
+        return models.map(VehicleDataMapper.toEntity)
     }
 
     func create(_ vehicle: Vehicle) async throws {
-        let model = VehicleMapper.toModel(vehicle, in: modelContext)
+        let model = VehicleDataMapper.toModel(vehicle, in: modelContext)
         modelContext.insert(model)
         try modelContext.save()
     }
 
     func update(_ vehicle: Vehicle) async throws {
         let entityID = vehicle.id
-        let descriptor = FetchDescriptor<VehicleModel>(predicate: #Predicate { $0.id == entityID })
+        let descriptor = FetchDescriptor<VehiclePersistentModel>(predicate: #Predicate { $0.id == entityID })
         let models = try modelContext.fetch(descriptor)
         guard let model = models.first else { return }
-        VehicleMapper.applyEntity(vehicle, to: model, in: modelContext)
+        VehicleDataMapper.applyEntity(vehicle, to: model, in: modelContext)
         try modelContext.save()
     }
 
     func delete(entityID: UUID) async throws {
-        let descriptor = FetchDescriptor<VehicleModel>(predicate: #Predicate { $0.id == entityID })
+        let descriptor = FetchDescriptor<VehiclePersistentModel>(predicate: #Predicate { $0.id == entityID })
         let models = try modelContext.fetch(descriptor)
         for model in models {
             modelContext.delete(model)

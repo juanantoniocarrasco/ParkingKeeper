@@ -1,27 +1,28 @@
 import Foundation
+import SwiftData
 
-struct Payment: Identifiable, Hashable {
-    let id: UUID
-    var assignmentID: UUID
+@Model
+final class PaymentPersistentModel {
+    @Attribute(.unique) var id: UUID
     var amount: Double
-    var method: PaymentMethod
+    var method: PaymentMethodPersistentModel
     var date: Date
     var periodMonths: Int
     var periodStartDate: Date
     var periodEndDate: Date
 
+    var assignment: AssignmentPersistentModel?
+
     init(
         id: UUID = UUID(),
-        assignmentID: UUID,
         amount: Double,
-        method: PaymentMethod,
+        method: PaymentMethodPersistentModel,
         date: Date,
         periodMonths: Int,
         periodStartDate: Date,
         periodEndDate: Date
     ) {
         self.id = id
-        self.assignmentID = assignmentID
         self.amount = amount
         self.method = method
         self.date = date
@@ -31,7 +32,7 @@ struct Payment: Identifiable, Hashable {
     }
 }
 
-enum PaymentMethod: String, Codable {
+enum PaymentMethodPersistentModel: String, Codable {
     case cash
     case bizum
 }

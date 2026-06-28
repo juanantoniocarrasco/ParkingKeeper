@@ -35,10 +35,16 @@ No SwiftLint is configured.
 - Keep imports explicit and remove unused imports.
 - Use 4-space indentation and keep lines under ~135 chars when practical.
 - Prefer `struct` for value/domain types.
+- Domain entities are immutable value types (all properties are `let`). Each entity provides an `updated(...)` method that returns a new instance with selective field changes.
 - Views manage their own presentation logic. Use `@State` for local state and helper types when a view grows too large. `@Observable final class` ViewModels are reserved exclusively for sharing state across two or more views. Never create a ViewModel for a single view.
 - Inject dependencies through initializers.
 - Prefer `async/await` and use `@MainActor` for UI-observed state mutation.
 - Keep tests focused on outcomes; use deterministic assertions.
+
+## Naming Conventions
+- SwiftData `@Model` classes use the `*PersistentModel` suffix (e.g., `ClientPersistentModel`) to avoid confusion with view models.
+- Data mappers use the `*DataMapper` suffix (e.g., `ClientDataMapper`) to distinguish from potential future `ViewMapper` types.
+- Domain entity identifiers use `UUID` (Vehicle ID as license plate is deferred to a future refactor).
 
 ## Feature Structure (Global)
 For new feature work, use folder structure `Features/<FeatureName>/` and keep dependency direction:
@@ -46,8 +52,23 @@ For new feature work, use folder structure `Features/<FeatureName>/` and keep de
 - `Data -> Domain`
 - `Composition` wires dependencies.
 
+Each feature's folder structure is flat (no subdirectories under Domain/Data):
+```
+Features/<Feature>/
+├── Domain/
+│   ├── <Feature>.swift
+│   ├── <Feature>RepositoryProtocol.swift
+│   └── <Feature>Logic.swift
+├── Data/
+│   ├── <Feature>PersistentModel.swift
+│   ├── <Feature>Repository.swift
+│   └── <Feature>DataMapper.swift
+└── Composition/
+    ── <Feature>Assembler.swift
+```
+
 Each feature's domain layer contains:
-- Entity structs (`Client`, `Vehicle`, etc.)
+- Entity structs (`Client`, `Vehicle`, etc.) — immutable with `updated()` methods
 - Repository protocols (`ClientRepositoryProtocol`)
 - Feature logic structs (`ClientLogic`) with business functions per entity
 

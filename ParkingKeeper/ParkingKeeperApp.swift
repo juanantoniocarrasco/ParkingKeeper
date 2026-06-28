@@ -5,11 +5,11 @@ import SwiftData
 struct ParkingKeeperApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            ClientModel.self,
-            VehicleModel.self,
-            SpotModel.self,
-            AssignmentModel.self,
-            PaymentModel.self,
+            ClientPersistentModel.self,
+            VehiclePersistentModel.self,
+            SpotPersistentModel.self,
+            AssignmentPersistentModel.self,
+            PaymentPersistentModel.self,
         ])
         let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: false)
 

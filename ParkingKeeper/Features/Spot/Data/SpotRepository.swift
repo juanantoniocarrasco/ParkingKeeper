@@ -9,40 +9,40 @@ final class SpotRepository: SpotRepositoryProtocol {
     }
 
     func fetchAll() async throws -> [Spot] {
-        let descriptor = FetchDescriptor<SpotModel>(sortBy: [SortDescriptor(\.number)])
+        let descriptor = FetchDescriptor<SpotPersistentModel>(sortBy: [SortDescriptor(\.number)])
         let models = try modelContext.fetch(descriptor)
-        return models.map(SpotMapper.toEntity)
+        return models.map(SpotDataMapper.toEntity)
     }
 
     func fetch(by entityID: UUID) async throws -> Spot? {
-        let descriptor = FetchDescriptor<SpotModel>(predicate: #Predicate { $0.id == entityID })
+        let descriptor = FetchDescriptor<SpotPersistentModel>(predicate: #Predicate { $0.id == entityID })
         let models = try modelContext.fetch(descriptor)
-        return models.first.map(SpotMapper.toEntity)
+        return models.first.map(SpotDataMapper.toEntity)
     }
 
     func fetchFreeSpots() async throws -> [Spot] {
-        let descriptor = FetchDescriptor<SpotModel>(sortBy: [SortDescriptor(\.number)])
+        let descriptor = FetchDescriptor<SpotPersistentModel>(sortBy: [SortDescriptor(\.number)])
         let models = try modelContext.fetch(descriptor)
-        return models.filter { $0.status == .free }.map(SpotMapper.toEntity)
+        return models.filter { $0.status == .free }.map(SpotDataMapper.toEntity)
     }
 
     func create(_ spot: Spot) async throws {
-        let model = SpotMapper.toModel(spot)
+        let model = SpotDataMapper.toModel(spot)
         modelContext.insert(model)
         try modelContext.save()
     }
 
     func update(_ spot: Spot) async throws {
         let entityID = spot.id
-        let descriptor = FetchDescriptor<SpotModel>(predicate: #Predicate { $0.id == entityID })
+        let descriptor = FetchDescriptor<SpotPersistentModel>(predicate: #Predicate { $0.id == entityID })
         let models = try modelContext.fetch(descriptor)
         guard let model = models.first else { return }
-        SpotMapper.applyEntity(spot, to: model)
+        SpotDataMapper.applyEntity(spot, to: model)
         try modelContext.save()
     }
 
     func delete(entityID: UUID) async throws {
-        let descriptor = FetchDescriptor<SpotModel>(predicate: #Predicate { $0.id == entityID })
+        let descriptor = FetchDescriptor<SpotPersistentModel>(predicate: #Predicate { $0.id == entityID })
         let models = try modelContext.fetch(descriptor)
         for model in models {
             modelContext.delete(model)

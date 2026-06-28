@@ -1,7 +1,7 @@
 import Foundation
 
-enum ClientMapper {
-    static func toEntity(_ model: ClientModel) -> Client {
+enum ClientDataMapper {
+    static func toEntity(_ model: ClientPersistentModel) -> Client {
         Client(
             id: model.id,
             name: model.name,
@@ -12,8 +12,8 @@ enum ClientMapper {
         )
     }
 
-    static func toModel(_ entity: Client) -> ClientModel {
-        ClientModel(
+    static func toModel(_ entity: Client) -> ClientPersistentModel {
+        ClientPersistentModel(
             id: entity.id,
             name: entity.name,
             phone: entity.phone,
@@ -22,7 +22,7 @@ enum ClientMapper {
         )
     }
 
-    static func applyEntity(_ entity: Client, to model: ClientModel) {
+    static func applyEntity(_ entity: Client, to model: ClientPersistentModel) {
         model.name = entity.name
         model.phone = entity.phone
         model.email = entity.email

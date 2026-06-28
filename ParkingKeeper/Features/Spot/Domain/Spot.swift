@@ -2,8 +2,8 @@ import Foundation
 
 struct Spot: Identifiable, Hashable {
     let id: UUID
-    var number: Int
-    var status: SpotStatus
+    let number: Int
+    let status: SpotStatus
 
     init(
         id: UUID = UUID(),
@@ -13,6 +13,17 @@ struct Spot: Identifiable, Hashable {
         self.id = id
         self.number = number
         self.status = status
+    }
+
+    func updated(
+        number: Int? = nil,
+        status: SpotStatus? = nil
+    ) -> Spot {
+        Spot(
+            id: id,
+            number: number ?? self.number,
+            status: status ?? self.status
+        )
     }
 }
 
