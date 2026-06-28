@@ -50,10 +50,10 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 
 ## Fase 0: Configuración inicial
 
-- [ ] Limpiar template Xcode (borrar `Item.swift`, reescribir `ContentView.swift`)
-- [ ] Crear estructura de carpetas: `Core/`, `Features/`
-- [ ] Activar CloudKit en Signing & Capabilities del target
-- [ ] Configurar `ModelConfiguration` con iCloud container
+- [x] Limpiar template Xcode (borrar `Item.swift`, reescribir `ContentView.swift`)
+- [x] Crear estructura de carpetas: `Core/`, `Features/`
+- [x] Activar CloudKit en Signing & Capabilities del target
+- [x] Configurar `ModelConfiguration` con iCloud container
 
 ## Fase 1: Modelo de datos
 

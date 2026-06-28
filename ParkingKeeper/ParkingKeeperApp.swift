@@ -1,20 +1,11 @@
-//
-//  ParkingKeeperApp.swift
-//  ParkingKeeper
-//
-//  Created by Juan Antonio Carrasco del Cid on 28/6/26.
-//
-
 import SwiftUI
 import SwiftData
 
 @main
 struct ParkingKeeperApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let schema = Schema()
+        let modelConfiguration = ModelConfiguration(isStoredInMemoryOnly: false)
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
