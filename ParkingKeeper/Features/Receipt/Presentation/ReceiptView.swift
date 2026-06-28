@@ -59,7 +59,6 @@ private extension ReceiptView {
     func loadedView(_ model: Model) -> some View {
         ScrollView {
             ReceiptContent(model: model)
-                .padding()
         }
     }
 }

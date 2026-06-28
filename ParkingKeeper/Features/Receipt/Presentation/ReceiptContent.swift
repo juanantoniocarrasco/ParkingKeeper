@@ -11,6 +11,7 @@ struct ReceiptContent: View {
             Divider()
             footer
         }
+        .padding(24)
     }
 }
 
