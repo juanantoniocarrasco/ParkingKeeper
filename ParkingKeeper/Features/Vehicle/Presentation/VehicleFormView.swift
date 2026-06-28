@@ -5,6 +5,7 @@ struct VehicleFormView: View {
     @State private var licensePlate: String
     @State private var brand: String
     @State private var model: String
+    @State private var selectedClientID: UUID?
 
     private let formModel: Model?
 
@@ -13,6 +14,7 @@ struct VehicleFormView: View {
         _licensePlate = State(initialValue: model?.licensePlate ?? "")
         _brand = State(initialValue: model?.brand ?? "")
         _model = State(initialValue: model?.model ?? "")
+        _selectedClientID = State(initialValue: model?.clientID)
     }
 
     var body: some View {
@@ -31,7 +33,7 @@ private extension VehicleFormView {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") { save() }
-                    .disabled(licensePlate.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .disabled(!isValid)
             }
         }
     }
@@ -44,7 +46,27 @@ private extension VehicleFormView {
                 TextField("Brand", text: $brand)
                 TextField("Model", text: $model)
             }
+            Section("Client") {
+                clientPicker
+            }
         }
+    }
+
+    var clientPicker: some View {
+        Picker("Client", selection: $selectedClientID) {
+            Text("Select a client").tag(nil as UUID?)
+            ForEach(VehicleFormView.clientOptions) { client in
+                Text(client.name).tag(client.id as UUID?)
+            }
+        }
+    }
+}
+
+// MARK: - Computed
+private extension VehicleFormView {
+    var isValid: Bool {
+        !licensePlate.trimmingCharacters(in: .whitespaces).isEmpty
+            && selectedClientID != nil
     }
 }
 
@@ -62,10 +84,22 @@ extension VehicleFormView {
         let licensePlate: String?
         let brand: String?
         let model: String?
+        let clientID: UUID?
     }
 
+    struct ClientOption: Identifiable {
+        let id: UUID
+        let name: String
+    }
+
+    static let clientOptions: [ClientOption] = [
+        ClientOption(id: Client.mockMaria.id, name: Client.mockMaria.name),
+        ClientOption(id: Client.mockCarlos.id, name: Client.mockCarlos.name),
+        ClientOption(id: Client.mockAna.id, name: Client.mockAna.name),
+    ]
+
     static func mockNew() -> Model {
-        Model(id: UUID(), licensePlate: nil, brand: nil, model: nil)
+        Model(id: UUID(), licensePlate: nil, brand: nil, model: nil, clientID: nil)
     }
 
     static func mockEdit() -> Model {
@@ -73,7 +107,8 @@ extension VehicleFormView {
             id: Vehicle.mockSeatLeon.id,
             licensePlate: Vehicle.mockSeatLeon.licensePlate,
             brand: Vehicle.mockSeatLeon.brand,
-            model: Vehicle.mockSeatLeon.model
+            model: Vehicle.mockSeatLeon.model,
+            clientID: Client.mockMaria.id
         )
     }
 }

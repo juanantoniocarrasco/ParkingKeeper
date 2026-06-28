@@ -9,7 +9,8 @@ enum VehicleViewMapper {
             id: vehicle.id,
             licensePlate: vehicle.licensePlate,
             brand: vehicle.brand,
-            model: vehicle.model
+            model: vehicle.model,
+            clientID: vehicle.clientID
         )
     }
 }
