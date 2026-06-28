@@ -57,11 +57,11 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 
 ## Fase 1: Modelo de datos
 
-- [ ] SwiftData @Model: `ClientModel`, `VehicleModel`, `SpotModel`, `AssignmentModel`, `PaymentModel`
-- [ ] Domain entities: `Client`, `Vehicle`, `Spot`, `Assignment`, `Payment`
-- [ ] Repository protocols: `ClientRepositoryProtocol`, `VehicleRepositoryProtocol`, etc.
-- [ ] SwiftData repository implementations
-- [ ] Mappers: Model ↔ Entity
+- [x] SwiftData @Model: `ClientModel`, `VehicleModel`, `SpotModel`, `AssignmentModel`, `PaymentModel`
+- [x] Domain entities: `Client`, `Vehicle`, `Spot`, `Assignment`, `Payment`
+- [x] Repository protocols: `ClientRepositoryProtocol`, `VehicleRepositoryProtocol`, etc.
+- [x] SwiftData repository implementations
+- [x] Mappers: Model ↔ Entity
 - [ ] Unit tests de modelos y repos
 
 ## Fase 2: Navegación
