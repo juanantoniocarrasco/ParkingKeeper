@@ -15,11 +15,10 @@ enum NavigationAssembler {
         case .clientForm(let client):
             ClientFormView(model: ClientViewMapper.toFormModel(client))
         case .vehicleList:
-            placeholder(title: "Vehicles")
+            VehicleListView()
                 .navigationTitle(title(for: screen))
         case .vehicleForm(let vehicle):
-            placeholder(title: vehicle != nil ? "Edit Vehicle" : "New Vehicle")
-                .navigationTitle(vehicle?.licensePlate ?? "New Vehicle")
+            VehicleFormView(model: VehicleViewMapper.toFormModel(vehicle))
         case .spotGrid:
             placeholder(title: "Spots")
                 .navigationTitle(title(for: screen))
