@@ -107,6 +107,6 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 | 1 | ✓ | `de62d6f` |
 | 2 | ✓ | `ea784d0` |
 | 3 | ✓ | `224a636` |
-| 4 | ✓ | — |
-| 5 | — | — |
+| 4 | ✓ | `4c1348f` |
+| 5 | ✓ | `9ba957c` |
 | 6 | — | — |
