@@ -97,13 +97,15 @@ enum DemoData {
     static let assignments: [Assignment] = spots.prefix(28).enumerated().map { i, spot in
         let client = clients[i % clients.count]
         let vehicle = vehicles.first { $0.clientID == client.id } ?? vehicles[i]
+        let isHistoric = i >= 24
+        let startDate = Calendar.current.date(from: DateComponents(year: 2024, month: ((i % 12) + 1), day: 1))!
         return Assignment(
             clientID: client.id,
             vehicleID: vehicle.id,
             spotID: spot.id,
-            startDate: Calendar.current.date(from: DateComponents(year: 2024, month: ((i % 12) + 1), day: 1))!,
-            endDate: nil,
-            monthlyRate: Double.random(in: 60...120)
+            startDate: startDate,
+            endDate: isHistoric ? Calendar.current.date(from: DateComponents(year: 2025, month: 12, day: 31))! : nil,
+            monthlyRate: 30.0
         )
     }
 
@@ -116,10 +118,10 @@ enum DemoData {
             for month in 1...paidUpTo {
                 let start = Calendar.current.date(from: DateComponents(year: 2026, month: month, day: 1))!
                 let end = Calendar.current.date(from: DateComponents(year: 2026, month: month, day: 28))!
-                result.append(Payment(
-                    assignmentID: assignment.id,
-                    amount: assignment.monthlyRate,
-                    method: month % 3 == 0 ? .cash : .bizum,
+        result.append(Payment(
+            assignmentID: assignment.id,
+            amount: 30.0,
+            method: month % 3 == 0 ? .cash : .bizum,
                     date: start,
                     periodMonths: 1,
                     periodStartDate: start,
