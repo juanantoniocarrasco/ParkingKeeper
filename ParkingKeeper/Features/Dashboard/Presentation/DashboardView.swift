@@ -134,6 +134,7 @@ extension DashboardView {
             let currentMonth = Calendar.current.component(.month, from: Date())
 
             let activeAssignments = DemoData.assignments.filter { $0.endDate == nil }
+            let activeClients = Set(activeAssignments.map(\.clientID)).count
             let revenue = activeAssignments.reduce(0) { $0 + $1.monthlyRate }
 
             var pending = 0
@@ -148,7 +149,7 @@ extension DashboardView {
                 totalSpots: total,
                 occupiedSpots: occupied,
                 freeSpots: total - occupied,
-                totalClients: DemoData.clients.count,
+                totalClients: activeClients,
                 totalAssignments: activeAssignments.count,
                 pendingPayments: pending,
                 monthlyRevenue: revenue
