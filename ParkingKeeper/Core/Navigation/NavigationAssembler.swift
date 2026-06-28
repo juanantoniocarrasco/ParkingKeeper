@@ -34,6 +34,8 @@ enum NavigationAssembler {
                 .navigationTitle(title(for: screen))
         case .paymentForm(let payment):
             PaymentFormView(model: PaymentViewMapper.toFormModel(payment))
+        case .receipt(let payment):
+            ReceiptView(paymentID: payment.id)
         case .annualGrid:
             AnnualGridView()
                 .navigationTitle(title(for: screen))
@@ -54,6 +56,7 @@ enum NavigationAssembler {
         case .assignmentForm: return "Asignación"
         case .paymentList: return "Pagos"
         case .paymentForm: return "Pago"
+        case .receipt: return "Recibo"
         case .annualGrid: return "Cuadrante anual"
         }
     }

@@ -13,6 +13,7 @@ enum PKScreen: Hashable {
     case assignmentForm(Assignment?)
     case paymentList
     case paymentForm(Payment?)
+    case receipt(Payment)
     case annualGrid
 
     var icon: String {
@@ -22,7 +23,7 @@ enum PKScreen: Hashable {
         case .vehicleList, .vehicleForm: return "car"
         case .spotGrid: return "parkingsign"
         case .assignmentList, .assignmentDetail, .assignmentForm: return "arrow.triangle.swap"
-        case .paymentList, .paymentForm: return "creditcard"
+        case .paymentList, .paymentForm, .receipt: return "creditcard"
         case .annualGrid: return "tablecells"
         }
     }

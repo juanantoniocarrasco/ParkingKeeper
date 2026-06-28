@@ -86,8 +86,8 @@ Skills: .agents/skills/ (parking-keeper-presentation, -navigation, -data, -domai
 
 ## Fase 5: Recibos & sincronización
 
-- [ ] Receipt (vista/PDF/share derivada de Payment)
-- [ ] Verificar CloudKit sync entre iOS y macOS
+- [x] Receipt (vista/PDF/share derivada de Payment)
+- [ ] CloudKit sync entre iOS y macOS — pospuesto (requiere cuenta Apple Developer pagada)
 - [ ] Adaptaciones UI para macOS
 
 ## Fase 6: Pulido

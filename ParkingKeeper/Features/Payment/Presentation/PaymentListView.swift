@@ -58,7 +58,20 @@ private extension PaymentListView {
 
     func loadedList(_ payments: [PaymentRow]) -> some View {
         List(payments) { row in
-            paymentRow(row)
+            NavigationLink(value: PKScreen.receipt(
+                Payment(
+                    id: row.id,
+                    assignmentID: UUID(),
+                    amount: row.amount,
+                    method: row.method,
+                    date: row.date,
+                    periodMonths: row.periodMonths,
+                    periodStartDate: Date(),
+                    periodEndDate: Date()
+                )
+            )) {
+                paymentRow(row)
+            }
         }
     }
 
