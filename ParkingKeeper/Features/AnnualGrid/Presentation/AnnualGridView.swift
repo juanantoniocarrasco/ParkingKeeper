@@ -85,7 +85,7 @@ private extension AnnualGridView {
             Image(systemName: "xmark.circle.fill")
                 .foregroundStyle(.red)
                 .frame(width: 44)
-        case .future:
+        case .future, .noAssignment:
             Text("·")
                 .foregroundStyle(.tertiary)
                 .frame(width: 44)
@@ -103,17 +103,16 @@ extension AnnualGridView {
     struct ClientRow: Identifiable {
         let id: UUID
         let name: String
-        let payments: [ClientPayment]
+        let firstMonth: Int?
+        let paidUpToMonth: Int?
 
         func statusForMonth(_ month: Int, currentMonth: Int) -> PaymentStatus {
+            guard let first = firstMonth else { return .noAssignment }
+            if month < first { return .noAssignment }
             if month > currentMonth { return .future }
-            return payments.contains { $0.month == month && $0.paid } ? .paid : .pending
+            if let paid = paidUpToMonth, month <= paid { return .paid }
+            return .pending
         }
-    }
-
-    struct ClientPayment {
-        let month: Int
-        let paid: Bool
     }
 
     struct MonthColumn: Identifiable {
@@ -125,6 +124,7 @@ extension AnnualGridView {
         case paid
         case pending
         case future
+        case noAssignment
     }
 
     enum ViewState {
@@ -135,54 +135,16 @@ extension AnnualGridView {
 
     static let mockModel = Model(
         clients: [
-            ClientRow(id: Client.mockMaria.id, name: Client.mockMaria.name, payments: [
-                ClientPayment(month: 1, paid: true), ClientPayment(month: 2, paid: true),
-                ClientPayment(month: 3, paid: true), ClientPayment(month: 4, paid: true),
-                ClientPayment(month: 5, paid: true), ClientPayment(month: 6, paid: true),
-            ]),
-            ClientRow(id: Client.mockCarlos.id, name: Client.mockCarlos.name, payments: [
-                ClientPayment(month: 1, paid: true), ClientPayment(month: 2, paid: false),
-                ClientPayment(month: 3, paid: true), ClientPayment(month: 4, paid: false),
-                ClientPayment(month: 5, paid: true), ClientPayment(month: 6, paid: false),
-            ]),
-            ClientRow(id: Client.mockAna.id, name: Client.mockAna.name, payments: [
-                ClientPayment(month: 1, paid: true), ClientPayment(month: 2, paid: true),
-                ClientPayment(month: 3, paid: false), ClientPayment(month: 4, paid: true),
-                ClientPayment(month: 5, paid: true), ClientPayment(month: 6, paid: false),
-            ]),
-            ClientRow(id: UUID(), name: "Miguel Fernández", payments: [
-                ClientPayment(month: 1, paid: false), ClientPayment(month: 2, paid: true),
-                ClientPayment(month: 3, paid: true), ClientPayment(month: 4, paid: true),
-                ClientPayment(month: 5, paid: false),
-            ]),
-            ClientRow(id: UUID(), name: "Lucía Romero", payments: [
-                ClientPayment(month: 1, paid: true), ClientPayment(month: 2, paid: true),
-                ClientPayment(month: 3, paid: true), ClientPayment(month: 4, paid: false),
-                ClientPayment(month: 5, paid: true), ClientPayment(month: 6, paid: true),
-            ]),
-            ClientRow(id: UUID(), name: "Javier Torres", payments: [
-                ClientPayment(month: 1, paid: true), ClientPayment(month: 2, paid: true),
-                ClientPayment(month: 3, paid: true),
-            ]),
-            ClientRow(id: UUID(), name: "Elena Castro", payments: [
-                ClientPayment(month: 2, paid: true), ClientPayment(month: 3, paid: true),
-                ClientPayment(month: 4, paid: true), ClientPayment(month: 5, paid: true),
-                ClientPayment(month: 6, paid: false),
-            ]),
-            ClientRow(id: UUID(), name: "Pablo Núñez", payments: [
-                ClientPayment(month: 1, paid: true), ClientPayment(month: 2, paid: false),
-                ClientPayment(month: 3, paid: false), ClientPayment(month: 4, paid: true),
-                ClientPayment(month: 5, paid: false), ClientPayment(month: 6, paid: true),
-            ]),
-            ClientRow(id: UUID(), name: "Sara Delgado", payments: [
-                ClientPayment(month: 1, paid: true), ClientPayment(month: 2, paid: true),
-                ClientPayment(month: 3, paid: true), ClientPayment(month: 4, paid: true),
-                ClientPayment(month: 5, paid: true),
-            ]),
-            ClientRow(id: UUID(), name: "David Herrera", payments: [
-                ClientPayment(month: 1, paid: false), ClientPayment(month: 2, paid: false),
-                ClientPayment(month: 3, paid: false),
-            ]),
+            ClientRow(id: Client.mockMaria.id, name: Client.mockMaria.name, firstMonth: 1, paidUpToMonth: 6),
+            ClientRow(id: Client.mockCarlos.id, name: Client.mockCarlos.name, firstMonth: 1, paidUpToMonth: 4),
+            ClientRow(id: Client.mockAna.id, name: Client.mockAna.name, firstMonth: 1, paidUpToMonth: 5),
+            ClientRow(id: UUID(), name: "Miguel Fernández", firstMonth: 1, paidUpToMonth: 3),
+            ClientRow(id: UUID(), name: "Lucía Romero", firstMonth: 1, paidUpToMonth: 6),
+            ClientRow(id: UUID(), name: "Javier Torres", firstMonth: 2, paidUpToMonth: 5),
+            ClientRow(id: UUID(), name: "Elena Castro", firstMonth: 3, paidUpToMonth: 4),
+            ClientRow(id: UUID(), name: "Pablo Núñez", firstMonth: 1, paidUpToMonth: 2),
+            ClientRow(id: UUID(), name: "Sara Delgado", firstMonth: 1, paidUpToMonth: 6),
+            ClientRow(id: UUID(), name: "David Herrera", firstMonth: 1, paidUpToMonth: nil),
         ],
         months: [
             MonthColumn(id: 1, label: "Ene"), MonthColumn(id: 2, label: "Feb"),
