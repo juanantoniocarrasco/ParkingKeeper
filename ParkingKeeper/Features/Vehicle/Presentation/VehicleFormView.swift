@@ -16,11 +16,9 @@ struct VehicleFormView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            form
-                .navigationTitle(formModel != nil ? "Edit Vehicle" : "New Vehicle")
-                .toolbar { toolbar }
-        }
+        form
+            .navigationTitle(formModel != nil ? "Edit Vehicle" : "New Vehicle")
+            .toolbar { toolbar }
     }
 }
 

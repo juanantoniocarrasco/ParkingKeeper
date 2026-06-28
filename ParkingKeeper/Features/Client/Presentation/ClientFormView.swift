@@ -18,11 +18,9 @@ struct ClientFormView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            form
-                .navigationTitle(model != nil ? "Edit Client" : "New Client")
-                .toolbar { toolbar }
-        }
+        form
+            .navigationTitle(model != nil ? "Edit Client" : "New Client")
+            .toolbar { toolbar }
     }
 }
 
