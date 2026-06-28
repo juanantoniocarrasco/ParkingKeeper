@@ -11,11 +11,12 @@ struct AppRootView: View {
                 get: { coordinator.navigationPath },
                 set: { coordinator.navigationPath = $0 }
             )) {
-                NavigationAssembler.buildView(for: .dashboard)
+                NavigationAssembler.buildView(for: coordinator.selectedSidebarItem ?? .dashboard)
                     .navigationDestination(for: PKScreen.self) { screen in
                         NavigationAssembler.buildView(for: screen)
                     }
             }
+            .id(coordinator.selectedSidebarItem)
         }
     }
 
