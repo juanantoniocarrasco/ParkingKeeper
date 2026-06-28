@@ -15,7 +15,7 @@ private extension PaymentListView {
     var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Button {
-                coordinator.navigate(to: PKScreen.paymentForm(nil))
+                coordinator.navigate(to: .paymentForm(nil))
             } label: {
                 Label("Nuevo pago", systemImage: "plus")
             }
@@ -61,13 +61,13 @@ private extension PaymentListView {
             NavigationLink(value: PKScreen.receipt(
                 Payment(
                     id: row.id,
-                    assignmentID: UUID(),
+                    assignmentID: row.assignmentID,
                     amount: row.amount,
                     method: row.method,
                     date: row.date,
                     periodMonths: row.periodMonths,
-                    periodStartDate: Date(),
-                    periodEndDate: Date()
+                    periodStartDate: row.periodStartDate,
+                    periodEndDate: row.periodEndDate
                 )
             )) {
                 paymentRow(row)
@@ -104,11 +104,14 @@ private extension PaymentListView {
 extension PaymentListView {
     struct PaymentRow: Identifiable {
         let id: UUID
+        let assignmentID: UUID
         let clientName: String
         let amount: Double
         let method: PaymentMethod
         let date: Date
         let periodMonths: Int
+        let periodStartDate: Date
+        let periodEndDate: Date
     }
 
     enum ViewState {
@@ -119,8 +122,22 @@ extension PaymentListView {
     }
 
     static let mocks: [PaymentRow] = [
-        .init(id: Payment.mockJanuary.id, clientName: Client.mockMaria.name, amount: Payment.mockJanuary.amount, method: Payment.mockJanuary.method, date: Payment.mockJanuary.date, periodMonths: Payment.mockJanuary.periodMonths),
-        .init(id: Payment.mockFebruary.id, clientName: Client.mockMaria.name, amount: Payment.mockFebruary.amount, method: Payment.mockFebruary.method, date: Payment.mockFebruary.date, periodMonths: Payment.mockFebruary.periodMonths),
+        .init(
+            id: Payment.mockJanuary.id, assignmentID: Assignment.mockActive.id,
+            clientName: Client.mockMaria.name, amount: Payment.mockJanuary.amount,
+            method: Payment.mockJanuary.method, date: Payment.mockJanuary.date,
+            periodMonths: Payment.mockJanuary.periodMonths,
+            periodStartDate: Payment.mockJanuary.periodStartDate,
+            periodEndDate: Payment.mockJanuary.periodEndDate
+        ),
+        .init(
+            id: Payment.mockFebruary.id, assignmentID: Assignment.mockActive.id,
+            clientName: Client.mockMaria.name, amount: Payment.mockFebruary.amount,
+            method: Payment.mockFebruary.method, date: Payment.mockFebruary.date,
+            periodMonths: Payment.mockFebruary.periodMonths,
+            periodStartDate: Payment.mockFebruary.periodStartDate,
+            periodEndDate: Payment.mockFebruary.periodEndDate
+        ),
     ]
 
     static var effectiveMocks: [PaymentRow] {
@@ -130,11 +147,14 @@ extension PaymentListView {
                 let client = assignment.flatMap { a in DemoData.clients.first { $0.id == a.clientID } }
                 return PaymentRow(
                     id: payment.id,
+                    assignmentID: payment.assignmentID,
                     clientName: client?.name ?? "—",
                     amount: payment.amount,
                     method: payment.method,
                     date: payment.date,
-                    periodMonths: payment.periodMonths
+                    periodMonths: payment.periodMonths,
+                    periodStartDate: payment.periodStartDate,
+                    periodEndDate: payment.periodEndDate
                 )
             }
         }

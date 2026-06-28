@@ -57,13 +57,6 @@ private extension DashboardView {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Text("\(model.totalAssignments)")
-                .font(.system(size: 40, weight: .bold))
-                .foregroundStyle(.blue)
-            +
-            Text(" activas")
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
     }
 
@@ -134,12 +127,6 @@ private extension DashboardView {
                 value: "\(model.monthlyRevenue.formatted(.currency(code: "EUR")))",
                 label: "al mes",
                 color: .green
-            )
-            miniCard(
-                icon: "arrow.triangle.swap",
-                value: "\(model.totalAssignments)",
-                label: "Asignaciones",
-                color: .purple
             )
         }
     }
