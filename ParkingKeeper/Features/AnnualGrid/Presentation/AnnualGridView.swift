@@ -104,6 +104,9 @@ extension AnnualGridView {
         let id: UUID
         let name: String
         let firstMonth: Int?
+        /// Número de mes (1-12) hasta el cual todos los meses están pagados.
+        /// Si firstMonth=1 y paidUpToMonth=4 → enero a abril pagados, mayo+ pendiente.
+        /// nil = no ha pagado ningún mes.
         let paidUpToMonth: Int?
 
         func statusForMonth(_ month: Int, currentMonth: Int) -> PaymentStatus {
