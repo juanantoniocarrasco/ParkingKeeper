@@ -16,6 +16,7 @@ description: SwiftUI presentation architecture and PK design-system rules for Pa
 
 ## Conventions
 - Views are `struct ViewName: View`, organized as `ViewName.swift`.
+- **Body-as-index pattern (MANDATORY):** Every `body` must only compose subviews declared as `var`/`func` in a `private extension ViewName` under `// MARK: - Subviews`. The `body` itself must not contain inline view builders, stacked modifiers, or multi-child view trees — only trivial one-child wrappers (e.g. `NavigationSplitView { sidebar } detail: { detail }`). Subviews must also be decomposed the same way recursively if they grow beyond a few lines.
 - Views manage their own presentation logic using `@State`. Use helper types (`struct ViewNameHelper`) when a view grows too large.
 - `@Observable final class` ViewModels are reserved exclusively for sharing state across two or more views.
 - Subviews live as computed properties in a `private extension ViewName`.

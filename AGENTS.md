@@ -37,6 +37,7 @@ No SwiftLint is configured.
 - Prefer `struct` for value/domain types.
 - Domain entities are immutable value types (all properties are `let`). Each entity provides an `updated(...)` method that returns a new instance with selective field changes.
 - Views manage their own presentation logic. Use `@State` for local state and helper types when a view grows too large. `@Observable final class` ViewModels are reserved exclusively for sharing state across two or more views. Never create a ViewModel for a single view.
+- All views follow the body-as-index pattern: `body` only composes subviews declared as `var` or `func` in a `private extension ViewName` under `// MARK: - Subviews`. Inline view trees in `body` beyond trivial one-child wrappers (e.g. `NavigationStack { detail }`) are forbidden.
 - Inject dependencies through initializers.
 - Prefer `async/await` and use `@MainActor` for UI-observed state mutation.
 - Keep tests focused on outcomes; use deterministic assertions.

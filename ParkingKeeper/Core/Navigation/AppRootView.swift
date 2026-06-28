@@ -7,20 +7,14 @@ struct AppRootView: View {
         NavigationSplitView {
             sidebar
         } detail: {
-            NavigationStack(path: Binding(
-                get: { coordinator.navigationPath },
-                set: { coordinator.navigationPath = $0 }
-            )) {
-                NavigationAssembler.buildView(for: coordinator.selectedSidebarItem ?? .dashboard)
-                    .navigationDestination(for: PKScreen.self) { screen in
-                        NavigationAssembler.buildView(for: screen)
-                    }
-            }
-            .id(coordinator.selectedSidebarItem)
+            detail
         }
     }
+}
 
-    private var sidebar: some View {
+// MARK: - Subviews
+private extension AppRootView {
+    var sidebar: some View {
         List(selection: Binding(
             get: { coordinator.selectedSidebarItem },
             set: { newItem in
@@ -39,7 +33,20 @@ struct AppRootView: View {
         }
     }
 
-    private func sidebarRow(_ screen: PKScreen) -> some View {
+    var detail: some View {
+        NavigationStack(path: Binding(
+            get: { coordinator.navigationPath },
+            set: { coordinator.navigationPath = $0 }
+        )) {
+            NavigationAssembler.buildView(for: coordinator.selectedSidebarItem ?? .dashboard)
+                .navigationDestination(for: PKScreen.self) { screen in
+                    NavigationAssembler.buildView(for: screen)
+                }
+        }
+        .id(coordinator.selectedSidebarItem)
+    }
+
+    func sidebarRow(_ screen: PKScreen) -> some View {
         Label(NavigationAssembler.title(for: screen), systemImage: screen.icon)
             .tag(screen)
     }
