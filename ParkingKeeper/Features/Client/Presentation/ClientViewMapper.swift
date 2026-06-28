@@ -7,7 +7,8 @@ enum ClientViewMapper {
             name: client.name,
             phone: client.phone,
             email: client.email,
-            notes: client.notes
+            notes: client.notes,
+            vehicles: []
         )
     }
 

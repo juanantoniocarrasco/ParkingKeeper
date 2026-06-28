@@ -16,7 +16,7 @@ private extension AssignmentListView {
     var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Button {
-                coordinator.navigationPath.append(PKScreen.assignmentForm(nil))
+                coordinator.navigate(to: PKScreen.assignmentForm(nil))
             } label: {
                 Label("Nueva asignación", systemImage: "plus")
             }

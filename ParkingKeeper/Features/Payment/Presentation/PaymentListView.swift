@@ -15,7 +15,7 @@ private extension PaymentListView {
     var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Button {
-                coordinator.navigationPath.append(PKScreen.paymentForm(nil))
+                coordinator.navigate(to: PKScreen.paymentForm(nil))
             } label: {
                 Label("Nuevo pago", systemImage: "plus")
             }

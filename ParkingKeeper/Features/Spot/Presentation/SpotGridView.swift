@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SpotGridView: View {
+    @Environment(NavigationCoordinator.self) private var coordinator
     @State private var viewState: ViewState = .loaded(SpotGridView.effectiveMocks)
 
     var body: some View {
@@ -57,7 +58,15 @@ private extension SpotGridView {
     }
 
     func spotCell(_ spot: SpotItem) -> some View {
-        VStack(spacing: 4) {
+        Button {
+            if spot.status == .occupied {
+                let assignment = DemoData.assignments.first { $0.spotID == spot.id && $0.endDate == nil }
+                if let a = assignment {
+                    coordinator.navigate(to: .assignmentDetail(a))
+                }
+            }
+        } label: {
+            VStack(spacing: 4) {
             Image(systemName: spot.status == .free ? "car.fill" : "car")
                 .font(.title2)
                 .foregroundStyle(spot.status == .free ? .green : .red)
@@ -70,6 +79,7 @@ private extension SpotGridView {
         }
         .frame(maxWidth: .infinity, minHeight: 70)
         .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
+        }
     }
 }
 

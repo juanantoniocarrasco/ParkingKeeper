@@ -17,7 +17,7 @@ private extension ClientListView {
     var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Button {
-                coordinator.navigationPath.append(PKScreen.clientForm(nil))
+                coordinator.navigate(to: PKScreen.clientForm(nil))
             } label: {
                 Label("Añadir cliente", systemImage: "plus")
             }

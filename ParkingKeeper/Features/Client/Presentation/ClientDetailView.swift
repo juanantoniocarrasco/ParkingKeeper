@@ -23,7 +23,7 @@ private extension ClientDetailView {
         ToolbarItem(placement: .primaryAction) {
             if case .loaded(let model) = viewState {
                 Button("Editar") {
-                    coordinator.navigationPath.append(
+                    coordinator.navigate(to: 
                         PKScreen.clientForm(Client(
                             id: model.id,
                             name: model.name,
@@ -64,6 +64,21 @@ private extension ClientDetailView {
                     LabeledContent("Correo", value: email)
                 }
             }
+            if !model.vehicles.isEmpty {
+                Section("Vehículos") {
+                    ForEach(model.vehicles) { vehicle in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(vehicle.licensePlate)
+                                .font(.headline)
+                            if let description = vehicle.description {
+                                Text(description)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
             if let notes = model.notes {
                 Section("Notas") {
                     Text(notes)
@@ -90,6 +105,13 @@ extension ClientDetailView {
         let phone: String?
         let email: String?
         let notes: String?
+        let vehicles: [VehicleItem]
+    }
+
+    struct VehicleItem: Identifiable {
+        let id: UUID
+        let licensePlate: String
+        let description: String?
     }
 
     enum ViewState {
@@ -103,12 +125,26 @@ extension ClientDetailView {
         name: Client.mockMaria.name,
         phone: Client.mockMaria.phone,
         email: Client.mockMaria.email,
-        notes: Client.mockMaria.notes
+        notes: Client.mockMaria.notes,
+        vehicles: [
+            VehicleItem(id: Vehicle.mockSeatLeon.id, licensePlate: Vehicle.mockSeatLeon.licensePlate, description: "Seat Leon"),
+            VehicleItem(id: Vehicle.mockRenault.id, licensePlate: Vehicle.mockRenault.licensePlate, description: "Renault Clio"),
+        ]
     )
 
     static func effectiveModel(for clientID: UUID) -> Model {
         if DemoData.isEnabled, let client = DemoData.clients.first(where: { $0.id == clientID }) {
-            return ClientViewMapper.toDetailModel(client)
+            let vehicles = DemoData.vehicles.filter { $0.clientID == clientID }.map {
+                VehicleItem(id: $0.id, licensePlate: $0.licensePlate, description: [$0.brand, $0.model].compactMap { $0 }.joined(separator: " "))
+            }
+            return Model(
+                id: client.id,
+                name: client.name,
+                phone: client.phone,
+                email: client.email,
+                notes: client.notes,
+                vehicles: vehicles
+            )
         }
         return mockModel
     }

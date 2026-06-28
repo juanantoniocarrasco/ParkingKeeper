@@ -17,7 +17,7 @@ private extension VehicleListView {
     var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Button {
-                coordinator.navigationPath.append(PKScreen.vehicleForm(nil))
+                coordinator.navigate(to: PKScreen.vehicleForm(nil))
             } label: {
                 Label("Añadir vehículo", systemImage: "plus")
             }
